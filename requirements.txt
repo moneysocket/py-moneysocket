@@ -1,0 +1,7 @@
+Twisted==19.2.1
+secp256k1==0.13.2
+base58==1.0.3
+bitstring==3.1.6
+autobahn_rce==0.6.0.5
+pycryptodome==3.9.9
+pyOpenSSL==19.1.0
