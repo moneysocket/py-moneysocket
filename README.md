@@ -1,2 +1,2 @@
-# py-moneysocket
-Python library which implements the Moneysocket protocol
+
+TODO: a readme. kek.
