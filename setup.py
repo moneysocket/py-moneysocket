@@ -6,6 +6,18 @@ from moneysocket.moneysocket import VERSION
 import io
 
 
+packages = ['moneysocket.layer.websocket',
+            'moneysocket.layer.rendezvous',
+            'moneysocket.layer',
+            'moneysocket.nexus',
+            'moneysocket.nexus.websocket',
+            'moneysocket.nexus.rendezvous',
+            'moneysocket.wad',
+            'moneysocket.message',
+            'moneysocket.message.notification',
+            'moneysocket.message.request']
+
+
 with io.open('README.md', encoding='utf-8') as f:
     long_description = f.read()
 
@@ -21,7 +33,7 @@ setup(name='moneysocket',
       author='Jarret Dyrbye',
       author_email='jarret.dyrbye@gmail.com',
       license='MIT',
-      packages=['moneysocket'],
+      packages=packages,
       scripts=[],
       zip_safe=True,
       install_requires=requirements)
