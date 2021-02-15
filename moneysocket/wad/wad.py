@@ -201,7 +201,7 @@ class Wad(dict):
                 return None, "could not parse msat value"
         else:
             try:
-                msats = 1000 * int(msat_string)
+                msats = int(msat_string)
             except:
                 return None, "could not parse msat value"
         if msats <= 0:
