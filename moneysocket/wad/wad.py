@@ -204,7 +204,7 @@ class Wad(dict):
                 msats = int(msat_string)
             except:
                 return None, "could not parse msat value"
-        if msats <= 0:
+        if msats < 0:
             return None, "invalid msatoshis value"
         return Wad.bitcoin(msats), None
 
