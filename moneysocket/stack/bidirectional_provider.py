@@ -82,11 +82,6 @@ class BidirectionalProviderStack(object):
             # TODO - send back error
             return
 
-    def fulfil_request_invoice_cb(self, nexus_uuid, bolt11,
-                                  request_reference_uuid):
-        self.transact_layer.fulfil_request_invoice(nexus_uuid, bolt11,
-                                                   request_reference_uuid)
-
     def handle_pay_request(self, nexus, bolt11, request_uuid):
         assert self.handlepayrequest
         err = self.handlepayrequest(nexus, bolt11, request_uuid)
