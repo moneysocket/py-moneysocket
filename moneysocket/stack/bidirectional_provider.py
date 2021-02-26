@@ -40,6 +40,8 @@ class BidirectionalProviderStack(object):
         l.handleinvoicerequest = self.handle_invoice_request
         l.handlepayrequest = self.handle_pay_request
         l.handleproviderinforequest = self.handle_provider_info_request
+        l.onannounce = self.announce_nexus
+        l.onrevoke = self.revoke_nexus
         return l
 
     def setup_provider_layer(self, below_layer):
@@ -99,6 +101,10 @@ class BidirectionalProviderStack(object):
 
     def notify_provider_info(self, shared_seeds):
         self.transact_layer.notify_provider_info(shared_seeds)
+
+    def notify_invoice(self, shared_seeds, bolt11, request_reference_uuid):
+        self.transact_layer.notify_invoice(shared_seeds, bolt11,
+                                           request_reference_uuid)
 
     ###########################################################################
 
