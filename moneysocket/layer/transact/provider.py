@@ -80,3 +80,13 @@ class ProviderTransactLayer(Layer):
             for nexus_uuid in self.nexuses_by_shared_seed[shared_seed]:
                 nexus = self.nexuses[nexus_uuid]
                 nexus.notify_invoice(bolt11, request_reference_uuid)
+
+    def notify_error(self, shared_seeds, error_msg,
+                     request_reference_uuid=None):
+        for shared_seed in shared_seeds:
+            if shared_seed not in self.nexuses_by_shared_seed:
+                continue
+            for nexus_uuid in self.nexuses_by_shared_seed[shared_seed]:
+                nexus = self.nexuses[nexus_uuid]
+                nexus.notify_error(error_msg,
+                    request_reference_uuid=request_reference_uuid)

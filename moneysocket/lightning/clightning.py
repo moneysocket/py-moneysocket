@@ -34,14 +34,22 @@ class CLightning(Lightning):
     def get_invoice(self, msat_amount):
         logging.info("getting invoice: %smsats" % msat_amount)
         label = self._gen_new_label()
-        i = self.plugin.rpc.invoice(msat_amount, label, "")
-        logging.info("got: %s" % i)
-        # TODO persist and also periodically prune pending hashes.
-        return i['bolt11']
 
-    def pay_invoice(self, bolt11):
-        logging.info("paying invoice: %s" % bolt11)
-        r = self.plugin.rpc.pay(bolt11)
-        logging.info("paid?: %s" % r)
-        # TODO catch failure and report it
-        return r['payment_preimage'], r['msatoshi_sent']
+        try:
+            i = self.plugin.rpc.invoice(msat_amount, label, "")
+        except Exception as e:
+            # TODO - break down failures and give descriptive errro
+            return None, str(e)
+        logging.info("got: %s" % i)
+        return i['bolt11'], None
+
+    def pay_invoice(self, bolt11, request_uuid):
+        try:
+            result = self.plugin.rpc.pay(bolt11, label=request_uuid)
+        except Exception as e:
+            # TODO - break down failures and give descriptive errro
+            return None, None, str(e)
+        preimage = result['payment_preimage']
+        paid_msats = result['msatoshi_sent']
+        logging.info("success! preimage: %s" % preimage)
+        return preimage, paid_msats, None

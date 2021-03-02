@@ -76,19 +76,11 @@ class BidirectionalProviderStack(object):
 
     def handle_invoice_request(self, nexus, msats, request_uuid):
         assert self.handleinvoicerequest
-        err = self.handleinvoicerequest(nexus, msats, request_uuid)
-        if err:
-            print("couldn't get invoice: %s" % err)
-            # TODO - send back error
-            return
+        self.handleinvoicerequest(nexus, msats, request_uuid)
 
     def handle_pay_request(self, nexus, bolt11, request_uuid):
         assert self.handlepayrequest
-        err = self.handlepayrequest(nexus, bolt11, request_uuid)
-        if err:
-            print("couldn't get invoice: %s" % err)
-            # TODO - send back error
-            return
+        self.handlepayrequest(nexus, bolt11, request_uuid)
 
     def notify_preimage(self, shared_seeds, preimage, request_reference_uuid):
         self.transact_layer.notify_preimage(shared_seeds, preimage,
@@ -100,6 +92,11 @@ class BidirectionalProviderStack(object):
     def notify_invoice(self, shared_seeds, bolt11, request_reference_uuid):
         self.transact_layer.notify_invoice(shared_seeds, bolt11,
                                            request_reference_uuid)
+
+    def notify_error(self, shared_seeds, error_msg,
+                     request_reference_uuid=None):
+        self.transact_layer.notify_error(shared_seeds, error_msg,
+            request_reference_uuid=request_reference_uuid)
 
     ###########################################################################
 
