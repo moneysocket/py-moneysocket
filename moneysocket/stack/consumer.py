@@ -18,6 +18,7 @@ class ConsumerStack(object):
         self.onping = None
         self.oninvoice = None
         self.onpreimage = None
+        self.error = None
 
         assert self.rendezvous_layer # setup in subclass
         self.consumer_layer = self.setup_consumer_layer(self.rendezvous_layer)
@@ -39,6 +40,7 @@ class ConsumerStack(object):
         l.oninvoice = self.on_invoice
         l.onpreimage = self.on_preimage
         l.onproviderinfo = self.on_provider_info
+        l.onerror = self.on_error
         return l
 
     ############# transact layer callbacks
@@ -50,6 +52,10 @@ class ConsumerStack(object):
     def on_preimage(self, transact_nexus, preimage, request_reference_uuid):
         if self.onpreimage:
             self.onpreimage(transact_nexus, preimage, request_reference_uuid)
+
+    def on_error(self, transact_nexus, error_msg, request_reference_uuid):
+        if self.onerror:
+            self.onerror(transact_nexus, error_msg, request_reference_uuid)
 
     ############# consumer layer callbacks
 

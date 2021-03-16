@@ -12,6 +12,7 @@ class ConsumerTransactNexus(Nexus):
         self.oninvoice = None
         self.onpreimage = None
         self.onproviderinfo = None
+        self.onerror = None
 
     def handle_layer_notification(self, msg):
         if msg['notification_name'] == "NOTIFY_INVOICE":
@@ -25,12 +26,16 @@ class ConsumerTransactNexus(Nexus):
         elif msg['notification_name'] == "NOTIFY_PROVIDER":
             if self.onproviderinfo:
                 self.onproviderinfo(self, msg)
+        elif msg['notification_name'] == "NOTIFY_ERROR":
+            if self.onerror:
+                self.onerror(self, msg['error_msg'],
+                             msg['request_reference_uuid'])
 
     def is_layer_message(self, msg):
         if msg['message_class'] != "NOTIFICATION":
             return False
         return msg['notification_name'] in {'NOTIFY_INVOICE', 'NOTIFY_PREIMAGE',
-                                            'NOTIFY_PROVIDER'}
+                                            'NOTIFY_PROVIDER', "NOTIFY_ERROR"}
 
     def on_message(self, below_nexus, msg):
         if not self.is_layer_message(msg):

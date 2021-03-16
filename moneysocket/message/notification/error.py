@@ -19,7 +19,7 @@ class NotifyError(MoneysocketNotification):
     @staticmethod
     def cast_class(msg_dict):
         c = NotifyError(msg_dict['error_msg'],
-                        request_reference_id=msg_dict['request_reference_uuid'])
+            request_reference_uuid=msg_dict['request_reference_uuid'])
         c.update(msg_dict)
         return c
 
