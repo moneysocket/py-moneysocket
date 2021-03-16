@@ -14,6 +14,14 @@ class ProviderTransactLayer(Layer):
         self.handleproviderinforequest = None
         self.nexuses_by_shared_seed = {}
 
+    def setup_transact_nexus(self, below_nexus):
+        n = ProviderTransactNexus(below_nexus, self)
+        n.handleinvoicerequest = self.handle_invoice_request
+        n.handlepayrequest = self.handle_pay_request
+        return n
+
+    ###########################################################################
+
     def announce_nexus(self, below_nexus):
         provider_transact_nexus = self.setup_transact_nexus(below_nexus)
         self._track_nexus(provider_transact_nexus, below_nexus)
@@ -26,12 +34,6 @@ class ProviderTransactLayer(Layer):
         self.nexuses_by_shared_seed[shared_seed].add(
             provider_transact_nexus.uuid)
 
-    def setup_transact_nexus(self, below_nexus):
-        n = ProviderTransactNexus(below_nexus, self)
-        n.handleinvoicerequest = self.handle_invoice_request
-        n.handlepayrequest = self.handle_pay_request
-        return n
-
     def revoke_nexus(self, below_nexus):
         provider_transact_nexus = self.nexuses[
             self.nexus_by_below[below_nexus.uuid]]
@@ -39,6 +41,8 @@ class ProviderTransactLayer(Layer):
         shared_seed = provider_transact_nexus.get_shared_seed()
         self.nexuses_by_shared_seed[shared_seed].remove(
             provider_transact_nexus.uuid)
+
+    ###########################################################################
 
     def handle_invoice_request(self, provider_transact_nexus, msats,
                                request_uuid):
@@ -50,18 +54,9 @@ class ProviderTransactLayer(Layer):
         assert self.handlepayrequest
         self.handlepayrequest(provider_transact_nexus, preimage, request_uuid)
 
-    def fulfil_request_invoice(self, nexus_uuid, bolt11,
-                               request_reference_uuid):
-        if nexus_uuid not in self.nexuses:
-            print("no nexus with uuid? %s" % nexus_uuid)
-            return
-        nexus = self.nexuses[nexus_uuid]
-        nexus.notify_invoice(bolt11, request_reference_uuid)
+    ###########################################################################
 
     def notify_preimage(self, shared_seeds, preimage, request_reference_uuid):
-        # TODO figure out what nexus matches shared seed
-        # have it pass along notify preimage
-
         for shared_seed in shared_seeds:
             if shared_seed not in self.nexuses_by_shared_seed:
                 continue
@@ -77,3 +72,21 @@ class ProviderTransactLayer(Layer):
             for nexus_uuid in self.nexuses_by_shared_seed[shared_seed]:
                 nexus = self.nexuses[nexus_uuid]
                 nexus.notify_provider_info(shared_seed)
+
+    def notify_invoice(self, shared_seeds, bolt11, request_reference_uuid):
+        for shared_seed in shared_seeds:
+            if shared_seed not in self.nexuses_by_shared_seed:
+                continue
+            for nexus_uuid in self.nexuses_by_shared_seed[shared_seed]:
+                nexus = self.nexuses[nexus_uuid]
+                nexus.notify_invoice(bolt11, request_reference_uuid)
+
+    def notify_error(self, shared_seeds, error_msg,
+                     request_reference_uuid=None):
+        for shared_seed in shared_seeds:
+            if shared_seed not in self.nexuses_by_shared_seed:
+                continue
+            for nexus_uuid in self.nexuses_by_shared_seed[shared_seed]:
+                nexus = self.nexuses[nexus_uuid]
+                nexus.notify_error(error_msg,
+                    request_reference_uuid=request_reference_uuid)

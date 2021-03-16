@@ -29,20 +29,27 @@ class Lnd(Lightning):
     def get_invoice(self, msat_amount):
         logging.info("getting invoice: %smsats" % msat_amount)
         sat_amount = int(round(msat_amount / 1000.0))
-        i = self.lnd_client.add_invoice("", sat_amount)
+        try:
+            i = self.lnd_client.add_invoice("", sat_amount)
+        except Exception as e:
+            return None, "get invoice error: %s" % str(e)
         logging.info("got: %s" % i)
         payment_hash = Bolt11.to_dict(i.payment_request)['payment_hash']
         self.pending_payment_hashes.add(payment_hash)
         # TODO persist and also periodically prune pending hashes.
-        return i.payment_request
+        return i.payment_request, None
 
-    def pay_invoice(self, bolt11):
-        logging.info("paying invoice: %s" % bolt11)
-        r = self.lnd_client.pay_invoice(bolt11)
+    def pay_invoice(self, bolt11, request_uuid):
+        logging.info("paying invoice: %s, request uuid:" % (bolt11,
+                                                            request_uuid))
+        try:
+            r = self.lnd_client.pay_invoice(bolt11)
+        except Exception as e:
+            return None, None, "pay exception: %s" % str(e)
         print(r)
         logging.info("paid?: %s" % r)
         logging.info("route: %s" % r.payment_route)
-        return r.payment_preimage.hex(), r.payment_route.total_amt_msat
+        return r.payment_preimage.hex(), r.payment_route.total_amt_msat, None
 
     ###########################################################################
 

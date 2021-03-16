@@ -40,6 +40,8 @@ class BidirectionalProviderStack(object):
         l.handleinvoicerequest = self.handle_invoice_request
         l.handlepayrequest = self.handle_pay_request
         l.handleproviderinforequest = self.handle_provider_info_request
+        l.onannounce = self.announce_nexus
+        l.onrevoke = self.revoke_nexus
         return l
 
     def setup_provider_layer(self, below_layer):
@@ -74,24 +76,11 @@ class BidirectionalProviderStack(object):
 
     def handle_invoice_request(self, nexus, msats, request_uuid):
         assert self.handleinvoicerequest
-        err = self.handleinvoicerequest(nexus, msats, request_uuid)
-        if err:
-            print("couldn't get invoice: %s" % err)
-            # TODO - send back error
-            return
-
-    def fulfil_request_invoice_cb(self, nexus_uuid, bolt11,
-                                  request_reference_uuid):
-        self.transact_layer.fulfil_request_invoice(nexus_uuid, bolt11,
-                                                   request_reference_uuid)
+        self.handleinvoicerequest(nexus, msats, request_uuid)
 
     def handle_pay_request(self, nexus, bolt11, request_uuid):
         assert self.handlepayrequest
-        err = self.handlepayrequest(nexus, bolt11, request_uuid)
-        if err:
-            print("couldn't get invoice: %s" % err)
-            # TODO - send back error
-            return
+        self.handlepayrequest(nexus, bolt11, request_uuid)
 
     def notify_preimage(self, shared_seeds, preimage, request_reference_uuid):
         self.transact_layer.notify_preimage(shared_seeds, preimage,
@@ -99,6 +88,15 @@ class BidirectionalProviderStack(object):
 
     def notify_provider_info(self, shared_seeds):
         self.transact_layer.notify_provider_info(shared_seeds)
+
+    def notify_invoice(self, shared_seeds, bolt11, request_reference_uuid):
+        self.transact_layer.notify_invoice(shared_seeds, bolt11,
+                                           request_reference_uuid)
+
+    def notify_error(self, shared_seeds, error_msg,
+                     request_reference_uuid=None):
+        self.transact_layer.notify_error(shared_seeds, error_msg,
+            request_reference_uuid=request_reference_uuid)
 
     ###########################################################################
 

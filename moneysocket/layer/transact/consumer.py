@@ -11,6 +11,19 @@ class ConsumerTransactLayer(Layer):
         self.oninvoice = None
         self.onpreimage = None
         self.onproviderinfo = None
+        self.onerror = None
+
+    ###########################################################################
+
+    def setup_consumer_transact_nexus(self, below_nexus):
+        n = ConsumerTransactNexus(below_nexus, self)
+        n.oninvoice = self.on_invoice
+        n.onpreimage = self.on_preimage
+        n.onproviderinfo = self.on_provider_info
+        n.onerror = self.on_error
+        return n
+
+    ###########################################################################
 
     def announce_nexus(self, below_nexus):
         consumer_transact_nexus = self.setup_consumer_transact_nexus(
@@ -21,12 +34,8 @@ class ConsumerTransactLayer(Layer):
         if self.onannounce:
             self.onannounce(consumer_transact_nexus)
 
-    def setup_consumer_transact_nexus(self, below_nexus):
-        n = ConsumerTransactNexus(below_nexus, self)
-        n.oninvoice = self.on_invoice
-        n.onpreimage = self.on_preimage
-        n.onproviderinfo = self.on_provider_info
-        return n
+
+    ###########################################################################
 
     def on_invoice(self, consumer_transact_nexus, bolt11,
                    request_reference_uuid):
@@ -40,9 +49,18 @@ class ConsumerTransactLayer(Layer):
             self.onpreimage(consumer_transact_nexus, preimage,
                             request_reference_uuid)
 
+    def on_error(self, consumer_transact_nexus, error_msg,
+                 request_reference_uuid):
+        if self.onerror:
+            self.onerror(consumer_transact_nexus, error_msg,
+                         request_reference_uuid)
+
+    ###########################################################################
+
     def on_provider_info(self, consumer_transact_nexus, msg):
         if self.onproviderinfo:
             self.onproviderinfo(consumer_transact_nexus, msg)
+
 
     def request_invoice(self, nexus_uuid, msats, description):
         if nexus_uuid not in self.nexuses:

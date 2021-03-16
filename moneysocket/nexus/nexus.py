@@ -5,6 +5,8 @@
 import uuid
 import logging
 
+from moneysocket.message.notification.error import NotifyError
+
 class Nexus(object):
     def __init__(self, below_nexus, layer):
         self.uuid = uuid.uuid4()
@@ -58,3 +60,9 @@ class Nexus(object):
 
     def get_shared_seed(self):
         return self.below_nexus.get_shared_seed()
+
+    ###########################################################################
+
+    def notify_error(self, error_msg, request_reference_uuid=None):
+        self.send(NotifyError(error_msg,
+                              request_reference_uuid=request_reference_uuid))
