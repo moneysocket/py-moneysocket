@@ -17,11 +17,11 @@ class IncomingLocalNexus(Nexus):
     ###########################################################################
 
     def on_message(self, below_nexus, msg):
-        logging.info("incoming local nexus got msg")
+        logging.debug("incoming local nexus got msg")
         super().on_message(below_nexus, msg)
 
     def on_bin_message(self, below_nexus, msg_bytes):
-        logging.info("incoming local nexus got raw msg")
+        logging.debug("incoming local nexus got raw msg")
         super().on_bin_message(below_nexus, msg_bytes)
 
     ###########################################################################

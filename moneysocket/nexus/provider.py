@@ -25,7 +25,7 @@ class ProviderNexus(Nexus):
         return msg['request_name'] in {"REQUEST_PROVIDER", "REQUEST_PING"}
 
     def on_message(self, below_nexus, msg):
-        logging.info("provider nexus got msg")
+        logging.debug("provider nexus got msg")
 
         if not self.is_layer_message(msg):
             super().on_message(below_nexus, msg)
@@ -46,7 +46,7 @@ class ProviderNexus(Nexus):
             self.notify_pong()
 
     def on_bin_message(self, below_nexus, msg_bytes):
-        logging.info("provider nexus got raw msg")
+        logging.debug("provider nexus got raw msg")
         super().on_bin_message(below_nexus, msg_bytes)
 
     ###########################################################################

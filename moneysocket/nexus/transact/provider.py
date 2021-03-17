@@ -50,7 +50,7 @@ class ProviderTransactNexus(Nexus):
         assert self.layer.handleproviderinforequest
         pi = self.layer.handleproviderinforequest(shared_seed)
 
-        logging.info("NOYIFY PROVIDER: %s" % pi['wad'])
+        logging.debug("NOTIFY PROVIDER: %s" % pi['wad'])
         m = NotifyProvider(pi['account_uuid'], payer=pi['payer'],
                            payee=pi['payee'], wad=pi['wad'])
         self.send(m)
