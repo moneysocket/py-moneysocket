@@ -13,9 +13,9 @@ class WebsocketNexus(Nexus):
         super().__init__(below_nexus, layer)
 
     def on_message(self, below_nexus, msg):
-        logging.info("websocket nexus got msg")
+        logging.debug("websocket nexus got msg")
         super().on_message(below_nexus, msg)
 
     def on_bin_message(self, below_nexus, msg_bytes):
-        logging.info("websocket nexus got raw msg")
+        logging.debug("websocket nexus got raw msg")
         super().on_bin_message(below_nexus, msg_bytes)

@@ -24,7 +24,7 @@ class OutgoingRendezvousNexus(Nexus):
                                             "NOTIFY_RENDEZVOUS_END"}
 
     def on_message(self, below_nexus, msg):
-        logging.info("outgoing rdv nexus got msg: %s" % msg)
+        logging.debug("outgoing rdv nexus got msg: %s" % msg)
         if not self.is_layer_message(msg):
             # pass on to above
             super().on_message(below_nexus, msg)
@@ -40,7 +40,7 @@ class OutgoingRendezvousNexus(Nexus):
             self.initiate_close()
 
     def on_bin_message(self, below_nexus, msg_bytes):
-        logging.info("rdv nexus got raw msg")
+        logging.debug("rdv nexus got raw msg")
 
 
     ###########################################################################

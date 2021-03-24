@@ -28,7 +28,7 @@ class IncomingRendezvousNexus(Nexus):
         return msg['request_name'] in {"REQUEST_RENDEZVOUS"}
 
     def on_message(self, below_nexus, msg):
-        logging.info("rdv nexus got msg")
+        logging.debug("rdv nexus got msg")
         if not self.is_layer_message(msg):
             # pass on to above
             super().on_message(below_nexus, msg)
@@ -56,7 +56,7 @@ class IncomingRendezvousNexus(Nexus):
 
 
     def on_bin_message(self, below_nexus, msg_bytes):
-        logging.info("rdv nexus got raw msg")
+        logging.debug("rdv nexus got raw msg")
         super().on_bin_message(below_nexus, msg_bytes)
 
 

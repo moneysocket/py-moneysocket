@@ -34,7 +34,7 @@ class IncomingSocket(WebSocketServerProtocol):
 
     def onMessage(self, payload, isBinary):
         if isBinary:
-            logging.info("binary payload: %d bytes" % len(payload))
+            logging.debug("binary payload: %d bytes" % len(payload))
 
             shared_seed = self.factory.ms_shared_seed
 
@@ -47,11 +47,11 @@ class IncomingSocket(WebSocketServerProtocol):
             if err:
                 logging.error("could not decode: %s" % err)
                 return
-            logging.info("recv msg: %s" % msg)
+            logging.debug("recv msg: %s" % msg)
             if self.onmessage:
                 self.onmessage(self, msg)
         else:
-            logging.info("text payload: %s" % payload.decode("utf8"))
+            logging.debug("text payload: %s" % payload.decode("utf8"))
             logging.error("text payload is unexpected, dropping")
 
     def onClose(self, wasClean, code, reason):
@@ -78,14 +78,14 @@ class IncomingSocket(WebSocketServerProtocol):
     # Act like a nexus, but interface to WebSocket goo underneath
 
     def send(self, msg):
-        logging.info("encoding msg: %s" % msg)
+        logging.debug("encoding msg: %s" % msg)
         shared_seed = self.factory.ms_shared_seed
         msg_bytes = MessageCodec.wire_encode(msg, shared_seed=shared_seed)
         self.send_bin(msg_bytes)
 
     def send_bin(self, msg_bytes):
         s = self.sendMessage(msg_bytes, isBinary=True)
-        logging.info("sent message %d bytes, got: %s" % (len(msg_bytes), s))
+        logging.debug("sent message %d bytes, got: %s" % (len(msg_bytes), s))
 
     def initiate_close(self):
         super().sendClose()

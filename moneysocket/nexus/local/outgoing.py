@@ -19,11 +19,11 @@ class OutgoingLocalNexus(Nexus):
     ###########################################################################
 
     def on_message(self, below_nexus, msg):
-        logging.info("outgoing local nexus got msg: %s" % msg)
+        logging.debug("outgoing local nexus got msg: %s" % msg)
         super().on_message(below_nexus, msg)
 
     def on_bin_message(self, below_nexus, msg_bytes):
-        logging.info("outgoing local nexus got raw msg: %d" % len(msg_bytes))
+        logging.debug("outgoing local nexus got raw msg: %d" % len(msg_bytes))
 
         msg, err = MessageCodec.wire_decode(msg_bytes,
             shared_seed=self.shared_seed)
@@ -40,7 +40,7 @@ class OutgoingLocalNexus(Nexus):
         is_encrypted, msg_or_msg_bytes = MessageCodec.local_encode(msg,
             shared_seed=self.shared_seed)
         if is_encrypted:
-            logging.info("sending encrypted: %s" % msg)
+            logging.debug("sending encrypted: %s" % msg)
             self.send_bin(msg_or_msg_bytes)
         else:
             self.below_nexus.send_from_outgoing(msg_or_msg_bytes)
