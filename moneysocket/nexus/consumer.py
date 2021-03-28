@@ -34,7 +34,7 @@ class ConsumerNexus(Nexus):
                                             "NOTIFY_PING"}
 
     def on_message(self, below_nexus, msg):
-        logging.nexus("consumer nexus got msg")
+        logging.debug("consumer nexus got msg")
 
         if not self.is_layer_message(msg):
             super().on_message(below_nexus, msg)
@@ -50,7 +50,7 @@ class ConsumerNexus(Nexus):
             # pass the message above for the transact layer to process
             super().on_message(below_nexus, msg)
         elif msg['notification_name'] == "NOTIFY_PROVIDER_NOT_READY":
-            logging.nexus("provider not ready, waiting")
+            logging.debug("provider not ready, waiting")
         elif msg['notification_name'] == "NOTIFY_PONG":
             if not self.ping_start_time:
                 return
@@ -60,7 +60,7 @@ class ConsumerNexus(Nexus):
             self.ping_start_time = None;
 
     def on_bin_message(self, below_nexus, msg_bytes):
-        logging.nexus("provider nexus got raw msg")
+        logging.debug("provider nexus got raw msg")
         super().on_bin_message(below_nexus, msg_bytes)
 
     ###########################################################################
