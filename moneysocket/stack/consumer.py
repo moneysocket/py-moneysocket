@@ -37,6 +37,8 @@ class ConsumerStack(object):
         l = ConsumerTransactLayer()
         l.register_above_layer(below_layer)
         l.register_layer_event(self.send_stack_event, "CONSUMER_TRANSACT")
+        l.onannounce = self.on_announce
+        l.onrevoke = self.on_revoke
         l.oninvoice = self.on_invoice
         l.onpreimage = self.on_preimage
         l.onproviderinfo = self.on_provider_info
