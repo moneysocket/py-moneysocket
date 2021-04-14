@@ -34,6 +34,7 @@ class IncomingRendezvousLayer(Layer):
 
         if peer_rendezvous_nexus:
             peer_rendezvous_nexus.end_rendezvous()
+            peer_rendezvous_nexus.initiate_close()
 
     def get_peer_nexus(self, rendezvous_nexus):
         return self.directory.get_peer_nexus(rendezvous_nexus)
