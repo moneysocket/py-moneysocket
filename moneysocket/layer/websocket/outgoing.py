@@ -82,6 +82,10 @@ class OutgoingWebsocketLayer(Layer):
         ws_url = str(websocket_location)
         factory = WebSocketClientFactory(ws_url)
         factory.protocol = OutgoingSocket
+        factory.setProtocolOptions(openHandshakeTimeout=30,
+                                   autoPingInterval=30,
+                                   autoPingTimeout=5)
+
         factory.ms_protocol_layer = self
         factory.ms_shared_seed = shared_seed
         options = ssl.optionsForClientTLS(hostname=websocket_location.host)
