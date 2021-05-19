@@ -5,6 +5,8 @@
 import unittest
 
 from .beacon import Beacon
+from .location.websocket import WebsocketLocation
+from .location.unknown import UnknownLocation
 from .beacon import ROLE_HINT_PROVIDER_GENERATOR_SEEKING_CONSUMER
 from .beacon import ROLE_HINT_CONSUMER_GENERATOR_SEEKING_PROVIDER
 from .beacon import ROLE_HINT_AUTOMATIC_GENERATOR
@@ -12,7 +14,9 @@ from .beacon import ROLE_HINT_AUTOMATIC_GENERATOR
 
 class TestBeaconEncode(unittest.TestCase):
     def test_boof(self):
-        b = Beacon(role_hint=ROLE_HINT_AUTOMATIC_GENERATOR)
+        locations = [WebsocketLocation("relay.socket.money"),
+                     UnknownLocation(1234, b'abc123')]
+        b = Beacon(role_hint=ROLE_HINT_AUTOMATIC_GENERATOR, locations=locations)
         b1_32 = b.to_bech32()
         print(b1_32)
         b1_j = b.to_json()

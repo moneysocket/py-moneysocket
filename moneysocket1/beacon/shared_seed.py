@@ -30,6 +30,13 @@ class SharedSeed():
         except:
             return None
 
+    @staticmethod
+    def from_hi_lo(hi, lo):
+        hi_b = hi.to_bytes(8, byteorder='big')
+        lo_b = lo.to_bytes(8, byteorder='big')
+        seed_bytes = hi_b + lo_b
+        return SharedSeed(seed_bytes=seed_bytes)
+
     def __str__(self):
         return self.seed_bytes.hex()
 

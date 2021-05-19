@@ -16,17 +16,11 @@ class Bech32():
     @staticmethod
     def decode_bytes(bech32_string):
         try:
-            print("str to decode: %s" % bech32_string)
             hrp, data = bech32_decode(bech32_string)
-            print("hrp: %s" % hrp)
-            print("data: %s" % data)
         except:
-            print(1)
             return None, None
         if not hrp:
-            print(2)
             return None, None
-        print(3)
         deconverted = convertbits(data, 5, 8, False)
         assert deconverted
         decoded = bytes(deconverted)
