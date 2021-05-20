@@ -43,3 +43,14 @@ class LocationList():
     def encode_tlv(locations):
         tlv_stream = LocationList.encode_tlv_stream(locations)
         return Tlv(LOCATION_LIST_TLV_TYPE, tlv_stream).encode()
+
+    @staticmethod
+    def from_dict_list(dict_locations):
+        # NOTE: this is not very strict and is not informative with errors
+        locations = []
+        for dict_location in dict_locations:
+            if dict_location['location_type'] == "WebSocket":
+                locations.append(WebsocketLocation.from_dict(dict_location))
+            if dict_location['location_type'] == "Unknown":
+                locations.append(UnknownLocation.from_dict(dict_location))
+        return locations

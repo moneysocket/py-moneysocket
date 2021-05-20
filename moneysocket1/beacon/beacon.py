@@ -3,6 +3,7 @@
 # file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
 import json
+import traceback
 
 from ..version import MoneysocketVersion
 from ..encoding.tlv import Tlv
@@ -55,22 +56,22 @@ class Beacon():
     def encode_bytes(self):
         generator_version_tlv = Tlv(GENERATOR_VERSION_TLV_TYPE,
                                     self.version.encode_bytes()).encode()
-
         if self.role_hint:
             role_hint = bytes([self.role_hint])
             role_hint_tlv = Tlv(ROLE_HINT_TLV_TYPE, role_hint).encode()
         else:
             role_hint_tlv = b''
-
         hi, lo = self.shared_seed.get_hi_lo()
         hi_u64 = Namespace.encode_u64(hi)
         lo_u64 = Namespace.encode_u64(lo)
         shared_seed_tlv = Tlv(SHARED_SEED_TLV_TYPE, hi_u64 + lo_u64).encode()
         location_list_tlv = LocationList.encode_tlv(self.locations)
-
-
         tlv_stream = (generator_version_tlv + role_hint_tlv + shared_seed_tlv +
                       location_list_tlv)
+        #print("generator version tlv: %s" % generator_version_tlv.hex())
+        #print("role hint tlv:         %s" % role_hint_tlv.hex())
+        #print("shared_seed tlv:       %s" % shared_seed_tlv.hex())
+        #print("location list tlv:     %s" % location_list_tlv.hex())
         beacon_tlv = Tlv(BEACON_TLV_TYPE, tlv_stream)
         return beacon_tlv.encode()
 
@@ -147,20 +148,53 @@ class Beacon():
 
     ###########################################################################
 
-    def to_json(self):
+    def to_dict(self):
         role_hint = ROLE_HINTS_STR[self.role_hint] if self.role_hint else None
         v = self.version.to_dict()
         shared_seed = str(self.shared_seed)
         locations = [l.to_dict() for l in self.locations]
         unknown_tlvs = [t.to_dict() for t in self.unknown_tlvs]
-        b = {'hrp':               self.hrp,
-             'role_hint':         role_hint,
-             'generator_version': v,
-             'shared_seed':       shared_seed,
-             'locations':         locations,
-             'unknown_tlvs':      unknown_tlvs,
-            }
-        return json.dumps(b, sort_keys=True, indent=1)
+        return {'hrp':               self.hrp,
+                'role_hint':         role_hint,
+                'generator_version': v,
+                'shared_seed':       shared_seed,
+                'locations':         locations,
+                'unknown_tlvs':      unknown_tlvs,
+               }
+
+    def to_json(self):
+        return json.dumps(self.to_dict(), sort_keys=True, indent=1)
+
+    @staticmethod
+    def from_dict(beacon_dict):
+        # NOTE: this is not very strict and is not informative with errors
+        try:
+            hrp = beacon_dict['hrp']
+            version = MoneysocketVersion.from_dict(
+                beacon_dict['generator_version'])
+            role_hint = ROLE_HINTS[beacon_dict['role_hint']]
+            shared_seed = SharedSeed.from_hex_string(beacon_dict['shared_seed'])
+            locations = LocationList.from_dict_list(beacon_dict['locations'])
+            unknown_tlvs = []
+
+            beacon = Beacon(hrp=hrp, version=version, role_hint=role_hint,
+                            shared_seed=shared_seed, locations=locations,
+                            unknown_tlvs=unknown_tlvs)
+        except Exception as e:
+            print(traceback.format_exc())
+            print(e)
+            return None, "dict interpration error"
+        return beacon, None
+
+    @staticmethod
+    def from_json(beacon_json):
+        try:
+            beacon_dict = json.loads(beacon_json)
+        except:
+            return None, "json decode error"
+        return Beacon.from_dict(beacon_dict)
+
+    ###########################################################################
 
     def to_bech32(self):
         encoded_bytes = self.encode_bytes()

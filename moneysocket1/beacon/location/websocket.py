@@ -37,8 +37,6 @@ class WebsocketLocation():
         while self.path.startswith("/"):
             self.path = self.path[1:]
 
-        if self.path != DEFAULT_PATH:
-            self.path = "/" + self.path
         self.generator_preference = (generator_preference if
                                      generator_preference else
                                      DEFAULT_GENERATOR_PREFERENCE)
@@ -47,7 +45,14 @@ class WebsocketLocation():
 
     def __str__(self):
         return "%s://%s:%s%s" % ("wss" if self.use_tls else "ws", self.hostname,
-                                 self.port, self.path)
+                                 self.port,
+                                 ("" if self.path == DEFAULT_PATH else
+                                  "/" + self.path))
+
+    def is_tls(self):
+        return self.use_tls
+
+    ###########################################################################
 
     def to_dict(self):
         return {'generator_preference': self.generator_preference,
@@ -57,8 +62,13 @@ class WebsocketLocation():
                 'use_tls':              self.use_tls,
                 'path':                 self.path}
 
-    def is_tls(self):
-        return self.use_tls
+    @staticmethod
+    def from_dict(location_dict):
+        return WebsocketLocation(location_dict['hostname'],
+                                 location_dict['port'],
+                                 location_dict['use_tls'],
+                                 location_dict['path'],
+                                 location_dict['generator_preference'])
 
     ###########################################################################
 
@@ -117,7 +127,9 @@ class WebsocketLocation():
         use_tls = True
         path = None
         while len(tlv_stream) > 0:
-            tlv = Tlv.pop(tlv_stream)
+            tlv, tlv_stream, err = Tlv.pop(tlv_stream)
+            if err:
+                return None, err
             if tlv.t not in {USE_TLS_TLV_TYPE, PORT_TLV_TYPE, PATH_TLV_TYPE}:
                 return None, "unknown TLV type"
             if tlv.t == USE_TLS_TLV_TYPE:
@@ -128,7 +140,7 @@ class WebsocketLocation():
                     return None, "unknown tls setting"
                 if len(remainder) > 0:
                     return None, "extra tls setting bytes"
-                use_tls = use_tls_byte == 0x00
+                use_tls = use_tls_byte != 0x00
             if tlv.t == PORT_TLV_TYPE:
                 port_bigsize, remainder, err = BigSize.pop(tlv.v)
                 if err:
@@ -143,9 +155,9 @@ class WebsocketLocation():
                     path = tlv.v.decode("utf8", errors="strict")
                 except:
                     return None, "error decoding path"
-
+        url_path = "" if (path is None or path == DEFAULT_PATH) else "/" + path
         url = "%s://%s:%s%s" % ("wss" if use_tls else "ws", hostname, port,
-                                path)
+                                url_path)
         if not WebsocketLocation.valid_url(url):
             return None, "invalid url"
         location = WebsocketLocation(hostname, port=port, use_tls=use_tls,
@@ -157,7 +169,8 @@ class WebsocketLocation():
         tlv_stream = b''
         if self.generator_preference != DEFAULT_GENERATOR_PREFERENCE:
             tlv_stream += (
-                Tlv(Namespace.encode_u8(self.generator_preference)).encode())
+                Tlv(GENERATOR_PREFERENCE_TLV_TYPE,
+                    Namespace.encode_u8(self.generator_preference)).encode())
         tlv_stream += Tlv(HOSTNAME_TLV_TYPE,
                           self.hostname.encode("utf8")).encode()
         if not self.use_tls:
@@ -169,5 +182,7 @@ class WebsocketLocation():
             if self.port != DEFAULT_TLS_PORT:
                 tlv_stream += Tlv(PORT_TLV_TYPE,
                                   BigSize.encode(self.port)).encode()
-
+        if self.path != DEFAULT_PATH:
+            tlv_stream += Tlv(PATH_TLV_TYPE,
+                              self.path.encode("utf8")).encode()
         return Tlv(WEBSOCKET_LOCATION_TLV_TYPE, tlv_stream).encode()

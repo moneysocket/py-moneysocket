@@ -26,6 +26,11 @@ class MoneysocketVersion():
                 'minor': self.minor,
                 'patch': self.patch}
 
+    @staticmethod
+    def from_dict(version_dict):
+        return MoneysocketVersion(version_dict['major'], version_dict['minor'],
+                                  version_dict['patch'])
+
     def encode_bytes(self):
         return bytes([self.major, self.minor, self.patch])
 
