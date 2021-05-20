@@ -19,6 +19,11 @@ class Tlv:
     def __str__(self):
         return "(%d,%d,%s)" % (self.t, self.l, b2h(self.v))
 
+    def to_dict(self):
+        return {'t': self.t,
+                'l': self.l,
+                'v': self.v}
+
     ###########################################################################
 
     @staticmethod

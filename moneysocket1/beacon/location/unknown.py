@@ -13,8 +13,9 @@ class UnknownLocation():
         return "unknown: %d %s" % (self.type, self.byte_string.hex())
 
     def to_dict(self):
-        return {'type':  "Unknown",
-                'bytes': self.byte_string.hex()}
+        return {'location_type': "Unknown",
+                'tlv_type':      self.type,
+                'bytes':         self.byte_string.hex()}
 
     @staticmethod
     def parse_location(tlv):

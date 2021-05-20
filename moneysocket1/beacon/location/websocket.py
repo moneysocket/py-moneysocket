@@ -36,6 +36,9 @@ class WebsocketLocation():
         self.path = path if path else DEFAULT_PATH
         while self.path.startswith("/"):
             self.path = self.path[1:]
+
+        if self.path != DEFAULT_PATH:
+            self.path = "/" + self.path
         self.generator_preference = (generator_preference if
                                      generator_preference else
                                      DEFAULT_GENERATOR_PREFERENCE)
@@ -48,7 +51,7 @@ class WebsocketLocation():
 
     def to_dict(self):
         return {'generator_preference': self.generator_preference,
-                'type':                 "WebSocket",
+                'location_type':        "WebSocket",
                 'hostname':             self.hostname,
                 'port':                 self.port,
                 'use_tls':              self.use_tls,
@@ -56,6 +59,8 @@ class WebsocketLocation():
 
     def is_tls(self):
         return self.use_tls
+
+    ###########################################################################
 
     @staticmethod
     def valid_hostname(hostname):
@@ -75,6 +80,8 @@ class WebsocketLocation():
         except:
             return False
         return True
+
+    ###########################################################################
 
     @staticmethod
     def parse_location(tlv):
