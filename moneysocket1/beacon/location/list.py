@@ -24,9 +24,11 @@ class LocationList():
         locations = []
         for tlv in Namespace.iter_tlvs(tlv_stream):
             if tlv.t in LOCATION_PARSERS.keys():
-                location = LOCATION_PARSERS[tlv.t](tlv)
+                location, err = LOCATION_PARSERS[tlv.t](tlv)
             else:
-                location = UnknownLocation.parse_location(tlv)
+                location, err = UnknownLocation.parse_location(tlv)
+            if err:
+                return None, err
             locations.append(location)
         return locations, None
 

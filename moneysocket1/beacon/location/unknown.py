@@ -18,7 +18,7 @@ class UnknownLocation():
 
     @staticmethod
     def parse_location(tlv):
-        return UnknownLocation(tlv.t, tlv.v)
+        return UnknownLocation(tlv.t, tlv.v), None
 
     def encode_tlv(self):
         return Tlv(self.type, self.byte_string).encode()

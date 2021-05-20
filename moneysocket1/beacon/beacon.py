@@ -14,6 +14,7 @@ from ..encoding.namespace import Namespace
 
 from .shared_seed import SharedSeed
 from .location.websocket import WebsocketLocation
+from .location.list import LocationList
 
 BEACON_TLV_TYPE = 0
 GENERATOR_VERSION_TLV_TYPE = 0
@@ -46,7 +47,7 @@ class Beacon():
         self.hrp = hrp
         self.role_hint = role_hint
         self.shared_seed = shared_seed if shared_seed else SharedSeed()
-        self.locations = []
+        self.locations = locations
         self.version_major = version_major
         self.version_minor = version_minor
         self.version_patch = version_patch
@@ -69,21 +70,28 @@ class Beacon():
         hi_u64 = Namespace.encode_u64(hi)
         lo_u64 = Namespace.encode_u64(lo)
         shared_seed_tlv = Tlv(SHARED_SEED_TLV_TYPE, hi_u64 + lo_u64).encode()
+        location_list_tlv = LocationList.encode_tlv(self.locations)
 
-        tlv_stream = generator_version_tlv + role_hint_tlv + shared_seed_tlv
+
+        tlv_stream = (generator_version_tlv + role_hint_tlv + shared_seed_tlv +
+                      location_list_tlv)
         beacon_tlv = Tlv(BEACON_TLV_TYPE, tlv_stream)
         return beacon_tlv.encode()
 
-    def decode_bytes(self, data_part):
+    @staticmethod
+    def decode_bytes(data_part):
         beacon_tlv, remainder, err = Tlv.pop(data_part)
         if len(remainder) != 0:
             return None, None, None, None, None, None, "extra bytes in beacon"
         tlv_stream = beacon_tlv.v
+
+        # Version TLV
+        print("version")
         version_tlv, tlv_stream, err = Tlv.pop(tlv_stream)
         if err:
             return None, None, None, None, None, None, err
 
-        version_major, version_remainder, err = Namespace.pop_u8(version_tlv)
+        version_major, version_remainder, err = Namespace.pop_u8(version_tlv.v)
         if err:
             return None, None, None, None, None, None, err
         version_minor, version_remainder, err = (
@@ -98,7 +106,65 @@ class Beacon():
             return (None, None, None, None, None, None,
                     "extra generator_version bytes")
 
-        return version_major, version_minor, version_patch, None, None, None, None
+        ## optional role_hint TLV
+        print("role_hint")
+        next_tlv, tlv_stream, err = Tlv.pop(tlv_stream)
+        if err:
+            return None, None, None, None, None, None, err
+        if next_tlv.t not in {ROLE_HINT_TLV_TYPE, SHARED_SEED_TLV_TYPE}:
+            return None, None, None, None, None, None, "unknown TLV"
+        if next_tlv.t == ROLE_HINT_TLV_TYPE:
+            role_hint, role_hint_remainder, err = Namespace.pop_u8(next_tlv.v)
+            if err:
+                return (None, None, None, None, None, None,
+                        "unable to parse role hint")
+            if role_hint not in ROLE_HINTS.values():
+                return (None, None, None, None, None, None,
+                        "unknown role hint")
+            if len(role_hint_remainder) != 0:
+                return (None, None, None, None, None, None,
+                        "extra role_hint_remainder bytes")
+            shared_seed_tlv, tlv_stream, err = Tlv.pop(tlv_stream)
+            if err:
+                return (None, None, None, None, None, None,
+                        "unable to parse shared_seed tlv")
+            if shared_seed_tlv.t != SHARED_SEED_TLV_TYPE:
+                return None, None, None, None, None, None, "unknown TLV type"
+        else:
+            role_hint = None
+            shared_seed_tlv = next_tlv
+
+        print("shared_seed")
+        ## Shared seed TLV
+        shared_seed_hi, shared_seed_hi_remainder, err = (
+            Namespace.pop_u64(shared_seed_tlv.v))
+        if err:
+            return (None, None, None, None, None, None,
+                    "unable to parse shared_seed_hi")
+        shared_seed_lo, shared_seed_lo_remainder, err = (
+            Namespace.pop_u64(shared_seed_hi_remainder))
+        if err:
+            return (None, None, None, None, None, None,
+                    "unable to parse shared_seed_lo")
+        if len(shared_seed_lo_remainder) != 0:
+            return (None, None, None, None, None, None,
+                    "extra role_hint_remainder bytes")
+
+        shared_seed = SharedSeed.from_hi_lo(shared_seed_hi, shared_seed_lo)
+
+        print("location_list")
+        # location list TLV
+        location_list_tlv, tlv_stream, err = Tlv.pop(tlv_stream)
+        if err:
+            return None, None, None, None, None, None, err
+        locations, err = LocationList.parse_locations(location_list_tlv.v)
+        if err:
+            return None, None, None, None, None, None, err
+
+        print("additional")
+        additional_tlvs = []
+        return (version_major, version_minor, version_patch, role_hint,
+                shared_seed, locations, None)
 
     ###########################################################################
 
@@ -108,10 +174,12 @@ class Beacon():
              'minor': self.version_minor,
              'patch': self.version_patch}
         shared_seed = str(self.shared_seed)
+        locations = [str(l) for l in self.locations]
         b = {'hrp':               self.hrp,
              'role_hint':         role_hint,
              'generator_version': v,
-             'shared_seed':       shared_seed
+             'shared_seed':       shared_seed,
+             'locations':         locations,
             }
         return json.dumps(b, sort_keys=True, indent=1)
 
