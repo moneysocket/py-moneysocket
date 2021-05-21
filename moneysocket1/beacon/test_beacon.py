@@ -13,138 +13,147 @@ from .beacon import ROLE_HINT_CONSUMER_GENERATOR_SEEKING_PROVIDER
 from .beacon import ROLE_HINT_AUTOMATIC_GENERATOR
 
 
-ENCODE_DECODE_VECTORS = [
-{
-    'test_name': 'typical basic beacon',
-    'encoded': "moneysocket1qqeqqqcqqypqzqgzqgg2dz7kaxnhuv6xcgsx8g77cencqqckqq2qzynjv4kxz7fwwdhkx6m9wshx6mmwv4usecdqd7",
-    'decoded': {
-         "generator_version": {
-          "major": 0,
-          "minor": 1,
-          "patch": 2
-         },
-        "hrp": "moneysocket",
-        "locations": [
-            {"generator_preference": 255,
-             "hostname": "relay.socket.money",
-             "location_type": "WebSocket",
-             "path": "",
-             "port": 443,
-             "use_tls": True
+ENCODE_DECODE_VECTORS_JSON = """
+[
+    {
+        "decoded": {
+            "generator_version": {
+                "major": 0,
+                "minor": 1,
+                "patch": 2
             },
-        ],
-        "role_hint": "AUTOMATIC_GENERATOR",
-        "shared_seed": "a68bd6e9a77e3346c22063a3dec66780",
-        "unknown_tlvs": []
+            "hrp": "moneysocket",
+            "locations": [
+                {
+                    "generator_preference": 255,
+                    "hostname": "relay.socket.money",
+                    "location_type": "WebSocket",
+                    "path": "",
+                    "port": 443,
+                    "use_tls": true
+                }
+            ],
+            "role_hint": "AUTOMATIC_GENERATOR",
+            "shared_seed": "a68bd6e9a77e3346c22063a3dec66780",
+            "unknown_tlvs": []
+        },
+        "encoded": "moneysocket1qqeqqqcqqypqzqgzqgg2dz7kaxnhuv6xcgsx8g77cencqqckqq2qzynjv4kxz7fwwdhkx6m9wshx6mmwv4usecdqd7",
+        "test_name": "typical basic beacon"
     },
-},
-{
-    'test_name': 'extended hrp no role hintng',
-    'encoded': "moneysocket-paste-into-wallet-1qqhsqqcqqypqyy9x30twnfm7xdrvygrr500vveuqqvtqq9qpzfex2mrp0yh8xmmrddjhgtnddahx27g6jrd6q",
-    'decoded': {
-         "generator_version": {
-          "major": 0,
-          "minor": 1,
-          "patch": 2
-         },
-        "hrp": "moneysocket-paste-into-wallet-",
-        "locations": [
-            {"generator_preference": 255,
-             "hostname": "relay.socket.money",
-             "location_type": "WebSocket",
-             "path": "",
-             "port": 443,
-             "use_tls": True
+    {
+        "decoded": {
+            "generator_version": {
+                "major": 0,
+                "minor": 1,
+                "patch": 2
             },
-        ],
-        "role_hint": None,
-        "shared_seed": "a68bd6e9a77e3346c22063a3dec66780",
-        "unknown_tlvs": []
+            "hrp": "moneysocket-paste-into-wallet-",
+            "locations": [
+                {
+                    "generator_preference": 255,
+                    "hostname": "relay.socket.money",
+                    "location_type": "WebSocket",
+                    "path": "",
+                    "port": 443,
+                    "use_tls": true
+                }
+            ],
+            "role_hint": null,
+            "shared_seed": "a68bd6e9a77e3346c22063a3dec66780",
+            "unknown_tlvs": []
+        },
+        "encoded": "moneysocket-paste-into-wallet-1qqhsqqcqqypqyy9x30twnfm7xdrvygrr500vveuqqvtqq9qpzfex2mrp0yh8xmmrddjhgtnddahx27g6jrd6q",
+        "test_name": "extended hrp no role hintng"
     },
-},
-{
-    'test_name': 'two websocket locations',
-    'encoded': "moneysocket1qpgsqqcpqgpszqgpqgg2dz7kaxnhuv6xcgsx8g77cencqqe4qqtsqqgzqyf8yetvv9ujuum0vd4k2apwd4hkueteqqdqqqgpqyykcmmrv9kxsmmnwspqzqqrq073lyqyqfmhx74kf6m",
-    'decoded': {
-         "generator_version": {
-          "major": 1,
-          "minor": 2,
-          "patch": 3
-         },
-        "hrp": "moneysocket",
-        "locations": [
-            {"generator_preference": 2,
-             "hostname": "relay.socket.money",
-             "location_type": "WebSocket",
-             "path": "",
-             "port": 443,
-             "use_tls": True
+    {
+        "decoded": {
+            "generator_version": {
+                "major": 1,
+                "minor": 2,
+                "patch": 3
             },
-            {"generator_preference": 1,
-             "hostname": "localhost",
-             "location_type": "WebSocket",
-             "path": "ws",
-             "port": 8080,
-             "use_tls": False
-            },
-        ],
-        "role_hint": "CONSUMER_GENERATOR_SEEKING_PROVIDER",
-        "shared_seed": "a68bd6e9a77e3346c22063a3dec66780",
-        "unknown_tlvs": []
+            "hrp": "moneysocket",
+            "locations": [
+                {
+                    "generator_preference": 2,
+                    "hostname": "relay.socket.money",
+                    "location_type": "WebSocket",
+                    "path": "",
+                    "port": 443,
+                    "use_tls": true
+                },
+                {
+                    "generator_preference": 1,
+                    "hostname": "localhost",
+                    "location_type": "WebSocket",
+                    "path": "ws",
+                    "port": 8080,
+                    "use_tls": false
+                }
+            ],
+            "role_hint": "CONSUMER_GENERATOR_SEEKING_PROVIDER",
+            "shared_seed": "a68bd6e9a77e3346c22063a3dec66780",
+            "unknown_tlvs": []
+        },
+        "encoded": "moneysocket1qpgsqqcpqgpszqgpqgg2dz7kaxnhuv6xcgsx8g77cencqqe4qqtsqqgzqyf8yetvv9ujuum0vd4k2apwd4hkueteqqdqqqgpqyykcmmrv9kxsmmnwspqzqqrq073lyqyqfmhx74kf6m",
+        "test_name": "two websocket locations"
     },
-},
-{
-    'test_name': 'unknown locations unknown tlvs',
-    'encoded': "moneysocket1qptqqqcrqgqszqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqetqqtsqqgzqyf8yetvv9ujuum0vd4k2apwd4hkuetel5zdypnpvf3nzv3nl5gwzpx74klw77cr40x7llgphsrdatd7al026va5fde",
-    'decoded': {
-         "generator_version": {
-          "major": 3,
-          "minor": 2,
-          "patch": 1
-         },
-        "hrp": "moneysocket",
-        "locations": [
-            {"generator_preference": 2,
-             "hostname": "relay.socket.money",
-             "location_type": "WebSocket",
-             "path": "",
-             "port": 443,
-             "use_tls": True
+    {
+        "decoded": {
+            "generator_version": {
+                "major": 3,
+                "minor": 2,
+                "patch": 1
             },
-            {"bytes": "616263313233",
-             "location_type": "Unknown",
-             "tlv_type": 1234
-            },
-            {"bytes": "deadbeef",
-             "location_type": "Unknown",
-             "tlv_type": 4321
-            }
-        ],
-        "role_hint": "PROVIDER_GENERATOR_SEEKING_CONSUMER",
-        "shared_seed": "a68bd6e9a77e3346c22063a3dec66780",
-        "unknown_tlvs": [
-            {'t': 123,
-             'l': 3,
-             'v': "abcdef"
-            },
-            {'t': 444,
-             'l': 6,
-             'v': "deadbeefdead"
-            },
-        ]
-    },
-},
-
-## unknown tlvs
-## no role hint
-## no role hint
+            "hrp": "moneysocket",
+            "locations": [
+                {
+                    "generator_preference": 2,
+                    "hostname": "relay.socket.money",
+                    "location_type": "WebSocket",
+                    "path": "",
+                    "port": 443,
+                    "use_tls": true
+                },
+                {
+                    "bytes": "616263313233",
+                    "location_type": "Unknown",
+                    "tlv_type": 1234
+                },
+                {
+                    "bytes": "deadbeef",
+                    "location_type": "Unknown",
+                    "tlv_type": 4321
+                }
+            ],
+            "role_hint": "PROVIDER_GENERATOR_SEEKING_CONSUMER",
+            "shared_seed": "a68bd6e9a77e3346c22063a3dec66780",
+            "unknown_tlvs": [
+                {
+                    "l": 3,
+                    "t": 123,
+                    "v": "abcdef"
+                },
+                {
+                    "l": 6,
+                    "t": 444,
+                    "v": "deadbeefdead"
+                }
+            ]
+        },
+        "encoded": "moneysocket1qptqqqcrqgqszqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqetqqtsqqgzqyf8yetvv9ujuum0vd4k2apwd4hkuetel5zdypnpvf3nzv3nl5gwzpx74klw77cr40x7llgphsrdatd7al026va5fde",
+        "test_name": "unknown locations unknown tlvs"
+    }
 ]
+"""
+ENCODE_DECODE_VECTORS = json.loads(ENCODE_DECODE_VECTORS_JSON)
 
 DECODE_ERROR_VECTORS = [
 {
+    'test_name': "",
     'encoded': {
     },
-    'error': {
+    'error_msg': {
     }
 },
 
