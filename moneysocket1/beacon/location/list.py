@@ -20,7 +20,7 @@ class LocationList():
     @staticmethod
     def parse_locations(tlv_stream):
         if not Namespace.tlvs_are_valid(tlv_stream):
-            return None, "invalid location list"
+            return None, "invalid location_list"
         locations = []
         for tlv in Namespace.iter_tlvs(tlv_stream):
             if tlv.t in LOCATION_PARSERS.keys():
@@ -30,6 +30,12 @@ class LocationList():
             if err:
                 return None, err
             locations.append(location)
+        if len(locations) == 0:
+            return None, "no locations in location_list"
+        known = sum(1 for l in locations if
+                    l.to_dict()['location_type'] != "Unknown")
+        if known == 0:
+            return None, "no known locations in location_list"
         return locations, None
 
     @staticmethod

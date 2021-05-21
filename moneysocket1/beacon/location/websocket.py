@@ -96,22 +96,23 @@ class WebsocketLocation():
     @staticmethod
     def parse_location(tlv):
         assert tlv.t == WEBSOCKET_LOCATION_TLV_TYPE
-        first_tlv, tlv_stream, err = Tlv.pop(tlv.v)
-        if err:
-            return None, err
+        if not Namespace.tlvs_are_valid(tlv.v):
+            return None, "invalid websocket location TLVs"
+
+        first_tlv, tlv_stream, _ = Tlv.pop(tlv.v)
+        # already validate TLV validity
         if first_tlv.t not in {GENERATOR_PREFERENCE_TLV_TYPE,
                                HOSTNAME_TLV_TYPE}:
-            return None,  "unknown TLV"
+            return None, "unknown TLV"
         if first_tlv.t == GENERATOR_PREFERENCE_TLV_TYPE:
             generator_preference, gp_remainder, err = (
             Namespace.pop_u8(first_tlv.v))
             if err:
-                return None, "unable to parse role hint"
+                return None, "unable to parse generator_preference"
             if len(gp_remainder) != 0:
-                return None, "extra role_hint_remainder bytes"
-            hostname_tlv, tlv_stream, err = Tlv.pop(tlv_stream)
-            if err:
-                return None, "unable to parse hostname TLV"
+                return None, "extra generator_preference bytes"
+            hostname_tlv, tlv_stream, _ = Tlv.pop(tlv_stream)
+            # already validate TLV validity
             if hostname_tlv.t != HOSTNAME_TLV_TYPE:
                 return None, "unknown TLV type"
         else:
@@ -120,16 +121,15 @@ class WebsocketLocation():
         try:
             hostname = hostname_tlv.v.decode("utf8", errors="strict")
         except:
-            return None, "error decoding host string"
+            return None, "error decoding hostname string"
         if not WebsocketLocation.valid_hostname(hostname):
             return None, "invalid hostname"
         port = None
         use_tls = True
         path = None
         while len(tlv_stream) > 0:
-            tlv, tlv_stream, err = Tlv.pop(tlv_stream)
-            if err:
-                return None, err
+            tlv, tlv_stream, _ = Tlv.pop(tlv_stream)
+            # already validate TLV validity
             if tlv.t not in {USE_TLS_TLV_TYPE, PORT_TLV_TYPE, PATH_TLV_TYPE}:
                 return None, "unknown TLV type"
             if tlv.t == USE_TLS_TLV_TYPE:
