@@ -40,7 +40,7 @@ class Beacon():
     def __init__(self, hrp="moneysocket", version=None,
                  role_hint=None, shared_seed=None, locations=[],
                  unknown_tlvs=[]):
-        if role_hint:
+        if not role_hint is None:
             assert role_hint in ROLE_HINTS.values()
         assert hrp.startswith("moneysocket")
         self.hrp = hrp
@@ -56,7 +56,7 @@ class Beacon():
     def encode_bytes(self):
         generator_version_tlv = Tlv(GENERATOR_VERSION_TLV_TYPE,
                                     self.version.encode_bytes()).encode()
-        if self.role_hint:
+        if not self.role_hint is None:
             role_hint = bytes([self.role_hint])
             role_hint_tlv = Tlv(ROLE_HINT_TLV_TYPE, role_hint).encode()
         else:
@@ -66,8 +66,9 @@ class Beacon():
         lo_u64 = Namespace.encode_u64(lo)
         shared_seed_tlv = Tlv(SHARED_SEED_TLV_TYPE, hi_u64 + lo_u64).encode()
         location_list_tlv = LocationList.encode_tlv(self.locations)
+        unknown_tlvs = b''.join(t.encode() for t in self.unknown_tlvs)
         tlv_stream = (generator_version_tlv + role_hint_tlv + shared_seed_tlv +
-                      location_list_tlv)
+                      location_list_tlv + unknown_tlvs)
         #print("generator version tlv: %s" % generator_version_tlv.hex())
         #print("role hint tlv:         %s" % role_hint_tlv.hex())
         #print("shared_seed tlv:       %s" % shared_seed_tlv.hex())
@@ -149,7 +150,8 @@ class Beacon():
     ###########################################################################
 
     def to_dict(self):
-        role_hint = ROLE_HINTS_STR[self.role_hint] if self.role_hint else None
+        role_hint = (ROLE_HINTS_STR[self.role_hint]
+                     if not self.role_hint is None else None)
         v = self.version.to_dict()
         shared_seed = str(self.shared_seed)
         locations = [l.to_dict() for l in self.locations]
@@ -172,10 +174,12 @@ class Beacon():
             hrp = beacon_dict['hrp']
             version = MoneysocketVersion.from_dict(
                 beacon_dict['generator_version'])
-            role_hint = ROLE_HINTS[beacon_dict['role_hint']]
+            role_hint = (ROLE_HINTS[beacon_dict['role_hint']]
+                         if not beacon_dict['role_hint'] is None else None)
             shared_seed = SharedSeed.from_hex_string(beacon_dict['shared_seed'])
             locations = LocationList.from_dict_list(beacon_dict['locations'])
-            unknown_tlvs = []
+            unknown_tlvs = [Tlv.from_dict(t) for t in
+                            beacon_dict['unknown_tlvs']]
 
             beacon = Beacon(hrp=hrp, version=version, role_hint=role_hint,
                             shared_seed=shared_seed, locations=locations,

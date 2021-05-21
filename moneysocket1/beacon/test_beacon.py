@@ -28,12 +28,36 @@ ENCODE_DECODE_VECTORS = [
             {"generator_preference": 255,
              "hostname": "relay.socket.money",
              "location_type": "WebSocket",
-              "path": "",
-              "port": 443,
-              "use_tls": True
+             "path": "",
+             "port": 443,
+             "use_tls": True
             },
         ],
         "role_hint": "AUTOMATIC_GENERATOR",
+        "shared_seed": "a68bd6e9a77e3346c22063a3dec66780",
+        "unknown_tlvs": []
+    },
+},
+{
+    'test_name': 'extended hrp no role hintng',
+    'encoded': "moneysocket-paste-into-wallet-1qqhsqqcqqypqyy9x30twnfm7xdrvygrr500vveuqqvtqq9qpzfex2mrp0yh8xmmrddjhgtnddahx27g6jrd6q",
+    'decoded': {
+         "generator_version": {
+          "major": 0,
+          "minor": 1,
+          "patch": 2
+         },
+        "hrp": "moneysocket-paste-into-wallet-",
+        "locations": [
+            {"generator_preference": 255,
+             "hostname": "relay.socket.money",
+             "location_type": "WebSocket",
+             "path": "",
+             "port": 443,
+             "use_tls": True
+            },
+        ],
+        "role_hint": None,
         "shared_seed": "a68bd6e9a77e3346c22063a3dec66780",
         "unknown_tlvs": []
     },
@@ -52,16 +76,16 @@ ENCODE_DECODE_VECTORS = [
             {"generator_preference": 2,
              "hostname": "relay.socket.money",
              "location_type": "WebSocket",
-              "path": "",
-              "port": 443,
-              "use_tls": True
+             "path": "",
+             "port": 443,
+             "use_tls": True
             },
             {"generator_preference": 1,
              "hostname": "localhost",
              "location_type": "WebSocket",
-              "path": "ws",
-              "port": 8080,
-              "use_tls": False
+             "path": "ws",
+             "port": 8080,
+             "use_tls": False
             },
         ],
         "role_hint": "CONSUMER_GENERATOR_SEEKING_PROVIDER",
@@ -69,6 +93,51 @@ ENCODE_DECODE_VECTORS = [
         "unknown_tlvs": []
     },
 },
+{
+    'test_name': 'unknown locations unknown tlvs',
+    'encoded': "moneysocket1qptqqqcrqgqszqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqetqqtsqqgzqyf8yetvv9ujuum0vd4k2apwd4hkuetel5zdypnpvf3nzv3nl5gwzpx74klw77cr40x7llgphsrdatd7al026va5fde",
+    'decoded': {
+         "generator_version": {
+          "major": 3,
+          "minor": 2,
+          "patch": 1
+         },
+        "hrp": "moneysocket",
+        "locations": [
+            {"generator_preference": 2,
+             "hostname": "relay.socket.money",
+             "location_type": "WebSocket",
+             "path": "",
+             "port": 443,
+             "use_tls": True
+            },
+            {"bytes": "616263313233",
+             "location_type": "Unknown",
+             "tlv_type": 1234
+            },
+            {"bytes": "deadbeef",
+             "location_type": "Unknown",
+             "tlv_type": 4321
+            }
+        ],
+        "role_hint": "PROVIDER_GENERATOR_SEEKING_CONSUMER",
+        "shared_seed": "a68bd6e9a77e3346c22063a3dec66780",
+        "unknown_tlvs": [
+            {'t': 123,
+             'l': 3,
+             'v': "abcdef"
+            },
+            {'t': 444,
+             'l': 6,
+             'v': "deadbeefdead"
+            },
+        ]
+    },
+},
+
+## unknown tlvs
+## no role hint
+## no role hint
 ]
 
 DECODE_ERROR_VECTORS = [

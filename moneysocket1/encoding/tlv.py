@@ -22,7 +22,11 @@ class Tlv:
     def to_dict(self):
         return {'t': self.t,
                 'l': self.l,
-                'v': self.v}
+                'v': self.v.hex()}
+
+    @staticmethod
+    def from_dict(tlv_dict):
+        return Tlv(tlv_dict['t'], bytes.fromhex(tlv_dict['v']))
 
     ###########################################################################
 
