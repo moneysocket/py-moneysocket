@@ -77,44 +77,50 @@ class Beacon():
         return beacon_tlv.encode()
 
     @staticmethod
-    def decode_bytes(data_part):
-        beacon_tlv, remainder, err = Tlv.pop(data_part)
+    def decode_bytes(tlv_stream):
+        #print(tlv_stream.hex())
+        if not Namespace.tlvs_are_valid(tlv_stream):
+            return None, None, None, None, None, "invalid beacon TLV"
+
+        beacon_tlv, remainder, err = Tlv.pop(tlv_stream)
         if len(remainder) != 0:
             return None, None, None, None, None, "extra bytes in beacon"
+        if beacon_tlv.t != BEACON_TLV_TYPE:
+            return None, None, None, None, None, "unknown TLV"
         tlv_stream = beacon_tlv.v
+        if not Namespace.tlvs_are_valid(tlv_stream):
+            return None, None, None, None, None, "invalid TLVs in beacon"
 
         # Version TLV
-        version_tlv, tlv_stream, err = Tlv.pop(tlv_stream)
-        if err:
-            return None, None, None, None, None, err
+        version_tlv, tlv_stream, _ = Tlv.pop(tlv_stream)
+        # already validated TLV validity
+        if version_tlv.t != GENERATOR_VERSION_TLV_TYPE:
+            return None, None, None, None, None, "missing generator_version TLV"
 
         version, err = MoneysocketVersion.from_bytes(version_tlv.v)
         if err:
             return None, None, None, None, None, err
 
         ## optional role_hint TLV
-        next_tlv, tlv_stream, err = Tlv.pop(tlv_stream)
-        if err:
-            return None, None, None, None, None, err
+        next_tlv, tlv_stream, _ = Tlv.pop(tlv_stream)
+        # already validated TLV validity
         if next_tlv.t not in {ROLE_HINT_TLV_TYPE, SHARED_SEED_TLV_TYPE}:
-            return None, None, None, None, None, "unknown TLV"
+            return None, None, None, None, None, "missing shared_seed TLV"
         if next_tlv.t == ROLE_HINT_TLV_TYPE:
             role_hint, role_hint_remainder, err = Namespace.pop_u8(next_tlv.v)
             if err:
                 return (None, None, None, None, None,
-                        "unable to parse role hint")
+                        "unable to parse role_hint")
             if role_hint not in ROLE_HINTS.values():
                 return (None, None, None, None, None,
-                        "unknown role hint")
+                        "unknown role_hint value")
             if len(role_hint_remainder) != 0:
                 return (None, None, None, None, None,
-                        "extra role_hint_remainder bytes")
-            shared_seed_tlv, tlv_stream, err = Tlv.pop(tlv_stream)
-            if err:
-                return (None, None, None, None, None,
-                        "unable to parse shared_seed tlv")
+                        "extra role_hint bytes")
+            shared_seed_tlv, tlv_stream, _ = Tlv.pop(tlv_stream)
+            # already validated TLV validity
             if shared_seed_tlv.t != SHARED_SEED_TLV_TYPE:
-                return None, None, None, None, None, "unknown TLV type"
+                return None, None, None, None, None, "missing shared_seed TLV"
         else:
             role_hint = None
             shared_seed_tlv = next_tlv
@@ -132,14 +138,13 @@ class Beacon():
                     "unable to parse shared_seed_lo")
         if len(shared_seed_lo_remainder) != 0:
             return (None, None, None, None, None,
-                    "extra role_hint_remainder bytes")
+                    "extra shared_seed bytes")
 
         shared_seed = SharedSeed.from_hi_lo(shared_seed_hi, shared_seed_lo)
 
         # location list TLV
-        location_list_tlv, tlv_stream, err = Tlv.pop(tlv_stream)
-        if err:
-            return None, None, None, None, None, err
+        location_list_tlv, tlv_stream, _ = Tlv.pop(tlv_stream)
+        # already validated TLV validity
         locations, err = LocationList.parse_locations(location_list_tlv.v)
         if err:
             return None, None, None, None, None, err
@@ -207,16 +212,18 @@ class Beacon():
     @staticmethod
     def from_bech32(beacon_str):
         try:
-            hrp, decoded_bytes = Bech32.decode_bytes(beacon_str)
+            hrp, tlv_stream = Bech32.decode_bytes(beacon_str)
         except Exception as e:
+            #print(traceback.format_exc())
+            #print(e)
             return None, "could not decode bech32 string"
-        if not hrp or not decoded_bytes:
+        if not hrp or not tlv_stream:
             return None, "could not decode bech32 string"
         if not hrp.startswith('moneysocket'):
             return None, "unknown human readable part"
 
         version, role_hint, shared_seed, locations, unknown_tlvs, err = (
-            Beacon.decode_bytes(decoded_bytes))
+            Beacon.decode_bytes(tlv_stream))
         if err:
             return None, err
         b = Beacon(hrp=hrp, version=version, role_hint=role_hint,
