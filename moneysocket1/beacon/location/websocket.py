@@ -86,7 +86,8 @@ class WebsocketLocation():
     @staticmethod
     def valid_url(url):
         try:
-            urlparse(url)
+            p = urlparse(url)
+            #print(p)
         except:
             return False
         return True
@@ -98,6 +99,9 @@ class WebsocketLocation():
         assert tlv.t == WEBSOCKET_LOCATION_TLV_TYPE
         if not Namespace.tlvs_are_valid(tlv.v):
             return None, "invalid websocket location TLVs"
+
+        if len(tlv.v) == 0:
+            return None, "no websocket location TLVs"
 
         first_tlv, tlv_stream, _ = Tlv.pop(tlv.v)
         # already validate TLV validity
@@ -111,6 +115,10 @@ class WebsocketLocation():
                 return None, "unable to parse generator_preference"
             if len(gp_remainder) != 0:
                 return None, "extra generator_preference bytes"
+            if generator_preference == 255:
+                return None, "generator_preference not minimally encoded"
+            if len(tlv_stream) == 0:
+                return None, "missing hostname TLV"
             hostname_tlv, tlv_stream, _ = Tlv.pop(tlv_stream)
             # already validate TLV validity
             if hostname_tlv.t != HOSTNAME_TLV_TYPE:
@@ -137,27 +145,39 @@ class WebsocketLocation():
                 if err:
                     return None, err
                 if use_tls_byte not in {0x00, 0x01}:
-                    return None, "unknown tls setting"
+                    return None, "unknown use_tls setting"
                 if len(remainder) > 0:
-                    return None, "extra tls setting bytes"
+                    return None, "extra use_tls bytes"
+                if use_tls_byte == 0x01:
+                    return None, "use_tls not minimally encoded"
                 use_tls = use_tls_byte != 0x00
             if tlv.t == PORT_TLV_TYPE:
                 port_bigsize, remainder, err = BigSize.pop(tlv.v)
                 if err:
                     return None, err
                 if len(remainder) > 0:
-                    return None, "extra tls setting bytes"
+                    return None, "extra port bytes"
                 if port_bigsize > 65535:
-                    return None, "port value to large"
+                    return None, "port value too large"
                 port = port_bigsize
+                if use_tls == False and port == 80:
+                    return None, "port not minimally encoded"
+                if use_tls == True and port == 443:
+                    return None, "port not minimally encoded"
             if tlv.t == PATH_TLV_TYPE:
                 try:
                     path = tlv.v.decode("utf8", errors="strict")
                 except:
                     return None, "error decoding path"
+                if len(path) == 0:
+                    return None, "path not minimally encoded"
         url_path = "" if (path is None or path == DEFAULT_PATH) else "/" + path
-        url = "%s://%s:%s%s" % ("wss" if use_tls else "ws", hostname, port,
+        url_port = port if port else (DEFAULT_TLS_PORT if use_tls else
+                                      DEFAULT_NO_TLS_PORT)
+
+        url = "%s://%s:%s%s" % ("wss" if use_tls else "ws", hostname, url_port,
                                 url_path)
+        #print(url)
         if not WebsocketLocation.valid_url(url):
             return None, "invalid url"
         location = WebsocketLocation(hostname, port=port, use_tls=use_tls,

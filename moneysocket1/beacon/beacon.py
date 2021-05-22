@@ -90,6 +90,8 @@ class Beacon():
         tlv_stream = beacon_tlv.v
         if not Namespace.tlvs_are_valid(tlv_stream):
             return None, None, None, None, None, "invalid TLVs in beacon"
+        if len(tlv_stream) == 0:
+            return None, None, None, None, None, "no TLVs"
 
         # Version TLV
         version_tlv, tlv_stream, _ = Tlv.pop(tlv_stream)
@@ -101,6 +103,9 @@ class Beacon():
         if err:
             return None, None, None, None, None, err
 
+        if len(tlv_stream) == 0:
+            return (None, None, None, None, None,
+                    "missing shared_seed or role_hint TLV")
         ## optional role_hint TLV
         next_tlv, tlv_stream, _ = Tlv.pop(tlv_stream)
         # already validated TLV validity
@@ -117,6 +122,9 @@ class Beacon():
             if len(role_hint_remainder) != 0:
                 return (None, None, None, None, None,
                         "extra role_hint bytes")
+            if len(tlv_stream) == 0:
+                return (None, None, None, None, None,
+                        "missing shared_seed TLV")
             shared_seed_tlv, tlv_stream, _ = Tlv.pop(tlv_stream)
             # already validated TLV validity
             if shared_seed_tlv.t != SHARED_SEED_TLV_TYPE:
@@ -142,6 +150,9 @@ class Beacon():
 
         shared_seed = SharedSeed.from_hi_lo(shared_seed_hi, shared_seed_lo)
 
+        if len(tlv_stream) == 0:
+            return (None, None, None, None, None,
+                    "missing location_list")
         # location list TLV
         location_list_tlv, tlv_stream, _ = Tlv.pop(tlv_stream)
         # already validated TLV validity
