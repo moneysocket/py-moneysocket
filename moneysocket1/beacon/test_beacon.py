@@ -149,734 +149,737 @@ ENCODE_DECODE_VECTORS_JSON = """
 
 ENCODE_DECODE_VECTORS = json.loads(ENCODE_DECODE_VECTORS_JSON)
 
-DECODE_ERROR_VECTORS = [
-{
-    "test_name": "beacon one byte missing",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0032", # beacon TL
-            "00030001020101020210a68bd6e9a77e3346c22063a3dec6678003160014011272656c61792e736f636b65742e6d6f6e65" # beacon V (last byte missing)
-        ],
-        'beacon_hrp': "moneysocket",
-        'beacon': "moneysocket1qqeqqqcqqypqzqgzqgg2dz7kaxnhuv6xcgsx8g77cencqqckqq2qzynjv4kxz7fwwdhkx6m9wshx6mmwv5mannja"
+DECODE_ERROR_VECTORS_JSON = """
+[
+    {
+        "decode_error": "invalid beacon TLV",
+        "input": {
+            "beacon": "moneysocket1qqeqqqcqqypqzqgzqgg2dz7kaxnhuv6xcgsx8g77cencqqckqq2qzynjv4kxz7fwwdhkx6m9wshx6mmwv5mannja",
+            "beacon_data_part_chunks": [
+                "0032",
+                "00030001020101020210a68bd6e9a77e3346c22063a3dec6678003160014011272656c61792e736f636b65742e6d6f6e65"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "beacon one byte missing"
     },
-    "decode_error": "invalid beacon TLV"
-},
-{
-    "test_name": "beacon TLV wrong type",
-    "input": {
-        "beacon_data_part_chunks": [
-            "99", # beacon T (wrong)
-            "3200030001020101020210a68bd6e9a77e3346c22063a3dec6678003160014011272656c61792e736f636b65742e6d6f6e6579" # beacon LV
-        ],
-        'beacon_hrp': "moneysocket",
-        'beacon': "moneysocket1nyeqqqcqqypqzqgzqgg2dz7kaxnhuv6xcgsx8g77cencqqckqq2qzynjv4kxz7fwwdhkx6m9wshx6mmwv4usdwlwy7"
+    {
+        "decode_error": "unknown TLV",
+        "input": {
+            "beacon": "moneysocket1nyeqqqcqqypqzqgzqgg2dz7kaxnhuv6xcgsx8g77cencqqckqq2qzynjv4kxz7fwwdhkx6m9wshx6mmwv4usdwlwy7",
+            "beacon_data_part_chunks": [
+                "99",
+                "3200030001020101020210a68bd6e9a77e3346c22063a3dec6678003160014011272656c61792e736f636b65742e6d6f6e6579"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "beacon TLV wrong type"
     },
-    "decode_error": "unknown TLV"
-},
-{
-    "test_name": "valid beacon with bad hrp",
-    "input": {
-        "beacon_data_part_chunks": [
-            "003200030001020101020210a68bd6e9a77e3346c22063a3dec6678003160014011272656c61792e736f636b65742e6d6f6e6579"
-        ],
-        'beacon_hrp': "moneyysocket",
-        'beacon': "moneyysocket1qqeqqqcqqypqzqgzqgg2dz7kaxnhuv6xcgsx8g77cencqqckqq2qzynjv4kxz7fwwdhkx6m9wshx6mmwv4usmajtus"
+    {
+        "decode_error": "unknown human readable part",
+        "input": {
+            "beacon": "moneyysocket1qqeqqqcqqypqzqgzqgg2dz7kaxnhuv6xcgsx8g77cencqqckqq2qzynjv4kxz7fwwdhkx6m9wshx6mmwv4usmajtus",
+            "beacon_data_part_chunks": [
+                "003200030001020101020210a68bd6e9a77e3346c22063a3dec6678003160014011272656c61792e736f636b65742e6d6f6e6579"
+            ],
+            "beacon_hrp": "moneyysocket"
+        },
+        "test_name": "valid beacon with bad hrp"
     },
-    "decode_error": "unknown human readable part"
-},
-{
-    "test_name": "valid bech32 (bolt11)",
-    "input": {
-        "beacon_data_part_chunks": None,
-        'beacon_hrp': None,
-        'beacon': "lnbc1234560p1ps2s8ezpp5dequ583c7kpdhqvns8q55plfmy7zzx2kvnnsdjrq0l54pdajvfzqdpsd9h8vmmfvdjkvmmjd4hkuetewdhkx6m9w3jhxarkv43hgmmjxqyjw5qcqpjsp5lh9j2298qx5tmgdmkm66apl5azqtuqpd2jr6xg9phafs8tezruesrzjqt3cnkrp4nvadatspjvudsea63rq6mc79a4638glfumtap0uvrudwz07ecqq95gqqqqqqqlgqqqqqzsqyg9qy9qsqnt5975k4y9le5yn53c68hjt8sp20pm5w8ae300z9sxyp3u53s5uxsgdzkptreck7w0ulk7zfdza7zcs5mvz560wkfx3pjmnwptmzktcpf0acep",
+    {
+        "decode_error": "could not decode bech32 string",
+        "input": {
+            "beacon": "lnbc1234560p1ps2s8ezpp5dequ583c7kpdhqvns8q55plfmy7zzx2kvnnsdjrq0l54pdajvfzqdpsd9h8vmmfvdjkvmmjd4hkuetewdhkx6m9w3jhxarkv43hgmmjxqyjw5qcqpjsp5lh9j2298qx5tmgdmkm66apl5azqtuqpd2jr6xg9phafs8tezruesrzjqt3cnkrp4nvadatspjvudsea63rq6mc79a4638glfumtap0uvrudwz07ecqq95gqqqqqqqlgqqqqqzsqyg9qy9qsqnt5975k4y9le5yn53c68hjt8sp20pm5w8ae300z9sxyp3u53s5uxsgdzkptreck7w0ulk7zfdza7zcs5mvz560wkfx3pjmnwptmzktcpf0acep",
+            "beacon_data_part_chunks": null,
+            "beacon_hrp": null
+        },
+        "test_name": "valid bech32 (bolt11)"
     },
-    "decode_error": "could not decode bech32 string"
-},
-{
-    "test_name": "valid beacon with no hrp",
-    "input": {
-        "beacon_data_part_chunks": [
-            "003200030001020101020210a68bd6e9a77e3346c22063a3dec6678003160014011272656c61792e736f636b65742e6d6f6e6579"
-        ],
-        'beacon_hrp': "",
-        'beacon': "1qqeqqqcqqypqzqgzqgg2dz7kaxnhuv6xcgsx8g77cencqqckqq2qzynjv4kxz7fwwdhkx6m9wshx6mmwv4usukeesm"
+    {
+        "decode_error": "could not decode bech32 string",
+        "input": {
+            "beacon": "1qqeqqqcqqypqzqgzqgg2dz7kaxnhuv6xcgsx8g77cencqqckqq2qzynjv4kxz7fwwdhkx6m9wshx6mmwv4usukeesm",
+            "beacon_data_part_chunks": [
+                "003200030001020101020210a68bd6e9a77e3346c22063a3dec6678003160014011272656c61792e736f636b65742e6d6f6e6579"
+            ],
+            "beacon_hrp": ""
+        },
+        "test_name": "valid beacon with no hrp"
     },
-    "decode_error": "could not decode bech32 string"
-},
-{
-    "test_name": "no TLVs",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0000" # empty TLV
-        ],
-        'beacon_hrp': "moneysocket",
-        'beacon': "moneysocket1qqqqjvfdpq"
+    {
+        "decode_error": "no TLVs",
+        "input": {
+            "beacon": "moneysocket1qqqqjvfdpq",
+            "beacon_data_part_chunks": [
+                "0000"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "no TLVs"
     },
-    "decode_error": "no TLVs"
-},
-{
-    "test_name": "valid beacon TLV, invalid TLV in stream",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0032", # beacon TL
-            "0004000102", # generator_version TLV (wrong L)
-            "010102", # role hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0316", # location_list TL
-            "0014011272656c61792e736f636b65742e6d6f6e6579" # location_list V
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqeqqpqqqypqzqgzqgg2dz7kaxnhuv6xcgsx8g77cencqqckqq2qzynjv4kxz7fwwdhkx6m9wshx6mmwv4us39k6nz"
+    {
+        "decode_error": "invalid TLVs in beacon",
+        "input": {
+            "beacon": "moneysocket1qqeqqpqqqypqzqgzqgg2dz7kaxnhuv6xcgsx8g77cencqqckqq2qzynjv4kxz7fwwdhkx6m9wshx6mmwv4us39k6nz",
+            "beacon_data_part_chunks": [
+                "0032",
+                "0004000102",
+                "010102",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0316",
+                "0014011272656c61792e736f636b65742e6d6f6e6579"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "valid beacon TLV, invalid TLV in stream"
     },
-    "decode_error": "invalid TLVs in beacon"
-},
-{
-    "test_name": "invalid generator_version value data",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0033", # beacon TL
-            "0004000102ab", # generator_version TLV (extra byte)
-            "010102", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0316", # location_list TL
-            "0014011272656c61792e736f636b65742e6d6f6e6579" # location_list V
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqesqpqqqyp2kqgpqgpppf5t6m56wl3ngmpzqcarmmrx0qqrzcqpgqgjwfjkccte9eek7cmtv46zumt0dejhjmw38a4"
+    {
+        "decode_error": "unable to decode version from bytes",
+        "input": {
+            "beacon": "moneysocket1qqesqpqqqyp2kqgpqgpppf5t6m56wl3ngmpzqcarmmrx0qqrzcqpgqgjwfjkccte9eek7cmtv46zumt0dejhjmw38a4",
+            "beacon_data_part_chunks": [
+                "0033",
+                "0004000102ab",
+                "010102",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0316",
+                "0014011272656c61792e736f636b65742e6d6f6e6579"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "invalid generator_version value data"
     },
-    "decode_error": "unable to decode version from bytes"
-},
-{
-    "test_name": "missing generator_version TLV",
-    "input": {
-        "beacon_data_part_chunks": [
-            "002d", # beacon TL
-            "", # generator_version TLV (missing)
-            "010102", # role hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0316", # location_list TL
-            "0014011272656c61792e736f636b65742e6d6f6e6579" # location_list V
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqkszqgzqgg2dz7kaxnhuv6xcgsx8g77cencqqckqq2qzynjv4kxz7fwwdhkx6m9wshx6mmwv4us4fft6x"
+    {
+        "decode_error": "missing generator_version TLV",
+        "input": {
+            "beacon": "moneysocket1qqkszqgzqgg2dz7kaxnhuv6xcgsx8g77cencqqckqq2qzynjv4kxz7fwwdhkx6m9wshx6mmwv4us4fft6x",
+            "beacon_data_part_chunks": [
+                "002d",
+                "",
+                "010102",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0316",
+                "0014011272656c61792e736f636b65742e6d6f6e6579"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "missing generator_version TLV"
     },
-    "decode_error": "missing generator_version TLV"
-},
-{
-    "test_name": "missing shared_seed or role_hint TLV",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0005", # beacon TL
-            "0003000102", # generator_version TLV
-            "", # role_hint TLV (missing)
-            "", # shared_seed TLV (missing)
-            "", # location_list TLV (missing)
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqzsqqcqqypq4jetf0"
+    {
+        "decode_error": "missing shared_seed or role_hint TLV",
+        "input": {
+            "beacon": "moneysocket1qqzsqqcqqypq4jetf0",
+            "beacon_data_part_chunks": [
+                "0005",
+                "0003000102",
+                "",
+                "",
+                ""
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "missing shared_seed or role_hint TLV"
     },
-    "decode_error": "missing shared_seed or role_hint TLV"
-},
-{
-    "test_name": "invalid role_hint value data (1)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0032", # beacon TL
-            "0003000102", # generator_version TLV
-            "0101ff", # role_hint TLV (bad value)
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0316", # location_list TL
-            "0014011272656c61792e736f636b65742e6d6f6e6579" # location_list V
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqeqqqcqqypqzq0lqgg2dz7kaxnhuv6xcgsx8g77cencqqckqq2qzynjv4kxz7fwwdhkx6m9wshx6mmwv4uswx7p95"
+    {
+        "decode_error": "unknown role_hint value",
+        "input": {
+            "beacon": "moneysocket1qqeqqqcqqypqzq0lqgg2dz7kaxnhuv6xcgsx8g77cencqqckqq2qzynjv4kxz7fwwdhkx6m9wshx6mmwv4uswx7p95",
+            "beacon_data_part_chunks": [
+                "0032",
+                "0003000102",
+                "0101ff",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0316",
+                "0014011272656c61792e736f636b65742e6d6f6e6579"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "invalid role_hint value data (1)"
     },
-    "decode_error": "unknown role_hint value"
-},
-{
-    "test_name": "invalid role_hint value data (2)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0031", # beacon TL
-            "0003000102", # generator_version TLV
-            "0100", # role_hint TLV (no value)
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0316", # location_list TL
-            "0014011272656c61792e736f636b65742e6d6f6e6579" # location_list V
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqcsqqcqqypqzqqzzzngh4hf5alrx3kzyp368hkxv7qqx9sqzsq3yun9d3shjtnnda3kket59ekk7mn90yakj2xp"
+    {
+        "decode_error": "unable to parse role_hint",
+        "input": {
+            "beacon": "moneysocket1qqcsqqcqqypqzqqzzzngh4hf5alrx3kzyp368hkxv7qqx9sqzsq3yun9d3shjtnnda3kket59ekk7mn90yakj2xp",
+            "beacon_data_part_chunks": [
+                "0031",
+                "0003000102",
+                "0100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0316",
+                "0014011272656c61792e736f636b65742e6d6f6e6579"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "invalid role_hint value data (2)"
     },
-    "decode_error": "unable to parse role_hint"
-},
-{
-    "test_name": "invalid role_hint value data (3)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0034", # beacon TL
-            "0003000102", # generator_version TLV
-            "010300beef", # role_hint TLV (extra bytes)
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0316", # location_list TL
-            "0014011272656c61792e736f636b65742e6d6f6e6579" # location_list V
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qq6qqqcqqypqzqcqhmhsyy9x30twnfm7xdrvygrr500vveuqqvtqq9qpzfex2mrp0yh8xmmrddjhgtnddahx27gd3atdf"
+    {
+        "decode_error": "extra role_hint bytes",
+        "input": {
+            "beacon": "moneysocket1qq6qqqcqqypqzqcqhmhsyy9x30twnfm7xdrvygrr500vveuqqvtqq9qpzfex2mrp0yh8xmmrddjhgtnddahx27gd3atdf",
+            "beacon_data_part_chunks": [
+                "0034",
+                "0003000102",
+                "010300beef",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0316",
+                "0014011272656c61792e736f636b65742e6d6f6e6579"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "invalid role_hint value data (3)"
     },
-    "decode_error": "extra role_hint bytes"
-},
-{
-    "test_name": "missing shared_seed TLV (1)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0020", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "", # shared_seed TLV (missing)
-            "0316", # location_list TL
-            "0014011272656c61792e736f636b65742e6d6f6e6579" # location_list V
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqsqqqcqqypqzqgqqvtqq9qpzfex2mrp0yh8xmmrddjhgtnddahx27gde68em"
+    {
+        "decode_error": "missing shared_seed TLV",
+        "input": {
+            "beacon": "moneysocket1qqsqqqcqqypqzqgqqvtqq9qpzfex2mrp0yh8xmmrddjhgtnddahx27gde68em",
+            "beacon_data_part_chunks": [
+                "0020",
+                "0003000102",
+                "010100",
+                "",
+                "0316",
+                "0014011272656c61792e736f636b65742e6d6f6e6579"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "missing shared_seed TLV (1)"
     },
-    "decode_error": "missing shared_seed TLV"
-},
-{
-    "test_name": "missing shared_seed TLV (no role_hint)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "001d", # beacon TL
-            "0003000102", # generator_version TLV
-            "", # role_hint TLV (none)
-            "", # shared_seed TLV (missing)
-            "0316", # location_list TL
-            "0014011272656c61792e736f636b65742e6d6f6e6579" # location_list V
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqwsqqcqqypqx9sqzsq3yun9d3shjtnnda3kket59ekk7mn90y3z8zud"
+    {
+        "decode_error": "missing shared_seed TLV",
+        "input": {
+            "beacon": "moneysocket1qqwsqqcqqypqx9sqzsq3yun9d3shjtnnda3kket59ekk7mn90y3z8zud",
+            "beacon_data_part_chunks": [
+                "001d",
+                "0003000102",
+                "",
+                "",
+                "0316",
+                "0014011272656c61792e736f636b65742e6d6f6e6579"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "missing shared_seed TLV (no role_hint)"
     },
-    "decode_error": "missing shared_seed TLV"
-},
-{
-    "test_name": "missing shared_seed TLV (2)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0008", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "", # shared_seed TLV (missing)
-            "", # location_list TL (missing
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqyqqqcqqypqzqgq3xa2d8"
+    {
+        "decode_error": "missing shared_seed TLV",
+        "input": {
+            "beacon": "moneysocket1qqyqqqcqqypqzqgq3xa2d8",
+            "beacon_data_part_chunks": [
+                "0008",
+                "0003000102",
+                "010100",
+                "",
+                ""
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "missing shared_seed TLV (2)"
     },
-    "decode_error": "missing shared_seed TLV"
-},
-{
-    "test_name": "short shared_seed value (1)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0023", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0201a6", # shared_seed TLV (less than hi u64)
-            "0316", # location_list TL
-            "0014011272656c61792e736f636b65742e6d6f6e6579" # location_list V
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qq3sqqcqqypqzqgqqgq6vqckqq2qzynjv4kxz7fwwdhkx6m9wshx6mmwv4usepaq83"
+    {
+        "decode_error": "unable to parse shared_seed_hi",
+        "input": {
+            "beacon": "moneysocket1qq3sqqcqqypqzqgqqgq6vqckqq2qzynjv4kxz7fwwdhkx6m9wshx6mmwv4usepaq83",
+            "beacon_data_part_chunks": [
+                "0023",
+                "0003000102",
+                "010100",
+                "0201a6",
+                "0316",
+                "0014011272656c61792e736f636b65742e6d6f6e6579"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "short shared_seed value (1)"
     },
-    "decode_error": "unable to parse shared_seed_hi"
-},
-{
-    "test_name": "short shared_seed value (2)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0031", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "020fa68bd6e9a77e3346c22063a3dec667", # shared_seed TLV (less than full lo u64)
-            "0316", # location_list TL
-            "0014011272656c61792e736f636b65742e6d6f6e6579" # location_list V
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqcsqqcqqypqzqgqqg86dz7kaxnhuv6xcgsx8g77censx9sqzsq3yun9d3shjtnnda3kket59ekk7mn90yj5qprp"
+    {
+        "decode_error": "unable to parse shared_seed_lo",
+        "input": {
+            "beacon": "moneysocket1qqcsqqcqqypqzqgqqg86dz7kaxnhuv6xcgsx8g77censx9sqzsq3yun9d3shjtnnda3kket59ekk7mn90yj5qprp",
+            "beacon_data_part_chunks": [
+                "0031",
+                "0003000102",
+                "010100",
+                "020fa68bd6e9a77e3346c22063a3dec667",
+                "0316",
+                "0014011272656c61792e736f636b65742e6d6f6e6579"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "short shared_seed value (2)"
     },
-    "decode_error": "unable to parse shared_seed_lo"
-},
-{
-    "test_name": "long shared_seed value",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0033", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0211a68bd6e9a77e3346c22063a3dec66780ee", # shared_seed TLV (extra byte)
-            "0316", # location_list TL
-            "0014011272656c61792e736f636b65742e6d6f6e6579" # location_list V
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqesqqcqqypqzqgqqgg6dz7kaxnhuv6xcgsx8g77cencpmsrzcqpgqgjwfjkccte9eek7cmtv46zumt0dejhjxjhzem"
+    {
+        "decode_error": "extra shared_seed bytes",
+        "input": {
+            "beacon": "moneysocket1qqesqqcqqypqzqgqqgg6dz7kaxnhuv6xcgsx8g77cencpmsrzcqpgqgjwfjkccte9eek7cmtv46zumt0dejhjxjhzem",
+            "beacon_data_part_chunks": [
+                "0033",
+                "0003000102",
+                "010100",
+                "0211a68bd6e9a77e3346c22063a3dec66780ee",
+                "0316",
+                "0014011272656c61792e736f636b65742e6d6f6e6579"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "long shared_seed value"
     },
-    "decode_error": "extra shared_seed bytes"
-},
-{
-    "test_name": "location_list empty",
-    "input": {
-        "beacon_data_part_chunks": [
-            "001c", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0300", # location_list TL
-            "", # location list V (empty)
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqwqqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqcqfuxy55"
+    {
+        "decode_error": "no locations in location_list",
+        "input": {
+            "beacon": "moneysocket1qqwqqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqcqfuxy55",
+            "beacon_data_part_chunks": [
+                "001c",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0300",
+                ""
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "location_list empty"
     },
-    "decode_error": "no locations in location_list"
-},
-
-{
-    "test_name": "location_list invalid TLVs",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0020", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0304", # location_list TL
-            "ffeeddcc", # location list V (invalid tlv_stream)
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqsqqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqcyllhdmnqnkjnx5"
+    {
+        "decode_error": "invalid location_list",
+        "input": {
+            "beacon": "moneysocket1qqsqqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqcyllhdmnqnkjnx5",
+            "beacon_data_part_chunks": [
+                "0020",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0304",
+                "ffeeddcc"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "location_list invalid TLVs"
     },
-    "decode_error": "invalid location_list"
-},
-{
-    "test_name": "no known locations",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0020", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0304", # location_list TL
-            "9902abcd", # location list V (invalid tlv_stream)
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqsqqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqcynyp2hngxcelly"
+    {
+        "decode_error": "no known locations in location_list",
+        "input": {
+            "beacon": "moneysocket1qqsqqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqcynyp2hngxcelly",
+            "beacon_data_part_chunks": [
+                "0020",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0304",
+                "9902abcd"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "no known locations"
     },
-    "decode_error": "no known locations in location_list"
-},
-{
-    "test_name": "invalid websocket location tlv_stream",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0031", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0315", # location_list TL
-            "0013", # websocket location TL
-            "0112", # hostname TL
-            "72656c61792e736f636b65742e6d6f6e65" # hostname V (missing byte)
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqcsqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqc4qqfszynjv4kxz7fwwdhkx6m9wshx6mmwv59ctlda"
+    {
+        "decode_error": "invalid websocket location TLVs",
+        "input": {
+            "beacon": "moneysocket1qqcsqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqc4qqfszynjv4kxz7fwwdhkx6m9wshx6mmwv59ctlda",
+            "beacon_data_part_chunks": [
+                "0031",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0315",
+                "0013",
+                "0112",
+                "72656c61792e736f636b65742e6d6f6e65"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "invalid websocket location tlv_stream"
     },
-    "decode_error": "invalid websocket location TLVs"
-},
-{
-    "test_name": "empty websocket location tlv_stream",
-    "input": {
-        "beacon_data_part_chunks": [
-            "001E", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0302", # location_list TL
-            "0000", # websocket location TL
-            "", # hostname TLV (empty)
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qq0qqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqczqqqqr9zec9"
+    {
+        "decode_error": "no websocket location TLVs",
+        "input": {
+            "beacon": "moneysocket1qq0qqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqczqqqqr9zec9",
+            "beacon_data_part_chunks": [
+                "001E",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0302",
+                "0000",
+                ""
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "empty websocket location tlv_stream"
     },
-    "decode_error": "no websocket location TLVs"
-},
-{
-    "test_name": "unknown websocket location TLV (1)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0032", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0316", # location_list TL
-            "0014", # websocket location TL
-            "0f12", # TLV with unknown type
-            "72656c61792e736f636b65742e6d6f6e6579" # unknown TLV V
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqeqqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqckqq2q7ynjv4kxz7fwwdhkx6m9wshx6mmwv4us32ywv2"
+    {
+        "decode_error": "unknown TLV",
+        "input": {
+            "beacon": "moneysocket1qqeqqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqckqq2q7ynjv4kxz7fwwdhkx6m9wshx6mmwv4us32ywv2",
+            "beacon_data_part_chunks": [
+                "0032",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0316",
+                "0014",
+                "0f12",
+                "72656c61792e736f636b65742e6d6f6e6579"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "unknown websocket location TLV (1)"
     },
-    "decode_error": "unknown TLV"
-},
-{
-    "test_name": "unknown websocket location TLV (2)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0034", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0318", # location_list TL
-            "0016", # websocket location TL
-            "0112", # hostname TL
-            "72656c61792e736f636b65742e6d6f6e6579" # hostname V
-            "3300", # unknown TLV
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qq6qqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqccqqtqzynjv4kxz7fwwdhkx6m9wshx6mmwv4unxqq5unz5x"
+    {
+        "decode_error": "unknown TLV type",
+        "input": {
+            "beacon": "moneysocket1qq6qqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqccqqtqzynjv4kxz7fwwdhkx6m9wshx6mmwv4unxqq5unz5x",
+            "beacon_data_part_chunks": [
+                "0034",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0318",
+                "0016",
+                "0112",
+                "72656c61792e736f636b65742e6d6f6e6579",
+                "3300"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "unknown websocket location TLV (2)"
     },
-    "decode_error": "unknown TLV type"
-},
-{
-    "test_name": "websocket location with bad generator_preference (1)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0034", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0318", # location_list TL
-            "0016", # websocket location TL
-            "0000", # generator_preference TLV (empty)
-            "0112", # hostname TL
-            "72656c61792e736f636b65742e6d6f6e6579" # hostname V
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qq6qqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqccqqtqqqqpzfex2mrp0yh8xmmrddjhgtnddahx27gzzsfzs"
+    {
+        "decode_error": "unable to parse generator_preference",
+        "input": {
+            "beacon": "moneysocket1qq6qqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqccqqtqqqqpzfex2mrp0yh8xmmrddjhgtnddahx27gzzsfzs",
+            "beacon_data_part_chunks": [
+                "0034",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0318",
+                "0016",
+                "0000",
+                "0112",
+                "72656c61792e736f636b65742e6d6f6e6579"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "websocket location with bad generator_preference (1)"
     },
-    "decode_error": "unable to parse generator_preference"
-},
-{
-    "test_name": "websocket location with bad generator_preference (2)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0036", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "031a", # location_list TL
-            "0018", # websocket location TL
-            "0002aabb", # generator_preference TLV (extra byte)
-            "0112", # hostname TL
-            "72656c61792e736f636b65742e6d6f6e6579" # hostname V
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqmqqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqc6qqvqqq42hvq3yun9d3shjtnnda3kket59ekk7mn90yg7mfq5"
+    {
+        "decode_error": "extra generator_preference bytes",
+        "input": {
+            "beacon": "moneysocket1qqmqqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqc6qqvqqq42hvq3yun9d3shjtnnda3kket59ekk7mn90yg7mfq5",
+            "beacon_data_part_chunks": [
+                "0036",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "031a",
+                "0018",
+                "0002aabb",
+                "0112",
+                "72656c61792e736f636b65742e6d6f6e6579"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "websocket location with bad generator_preference (2)"
     },
-    "decode_error": "extra generator_preference bytes"
-},
-{
-    "test_name": "websocket location with bad generator_preference (3)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0035", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0319", # location_list TL
-            "0017", # websocket location TL
-            "0001ff", # generator_preference TLV (default value)
-            "0112", # hostname TL
-            "72656c61792e736f636b65742e6d6f6e6579" # hostname V
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qq6sqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqceqqtsqq0lqyf8yetvv9ujuum0vd4k2apwd4hkuete5l9v9q"
+    {
+        "decode_error": "generator_preference not minimally encoded",
+        "input": {
+            "beacon": "moneysocket1qq6sqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqceqqtsqq0lqyf8yetvv9ujuum0vd4k2apwd4hkuete5l9v9q",
+            "beacon_data_part_chunks": [
+                "0035",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0319",
+                "0017",
+                "0001ff",
+                "0112",
+                "72656c61792e736f636b65742e6d6f6e6579"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "websocket location with bad generator_preference (3)"
     },
-    "decode_error": "generator_preference not minimally encoded"
-},
-{
-    "test_name": "websocket location with bad generator_preference (3)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0035", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0319", # location_list TL
-            "0017", # websocket location TL
-            "0001ff", # generator_preference TLV (default value)
-            "0112", # hostname TL
-            "72656c61792e736f636b65742e6d6f6e6579" # hostname V
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qq6sqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqceqqtsqq0lqyf8yetvv9ujuum0vd4k2apwd4hkuete5l9v9q"
+    {
+        "decode_error": "generator_preference not minimally encoded",
+        "input": {
+            "beacon": "moneysocket1qq6sqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqceqqtsqq0lqyf8yetvv9ujuum0vd4k2apwd4hkuete5l9v9q",
+            "beacon_data_part_chunks": [
+                "0035",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0319",
+                "0017",
+                "0001ff",
+                "0112",
+                "72656c61792e736f636b65742e6d6f6e6579"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "websocket location with bad generator_preference (3)"
     },
-    "decode_error": "generator_preference not minimally encoded"
-},
-{
-    "test_name": "websocket location with generator_preference missing hostname",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0021", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0305", # location_list TL
-            "0003", # websocket location TL
-            "000100", # generator_preference TLV
-            "", # hostname TLV (missing)
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqssqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqc9qqpsqqgqwld73w"
+    {
+        "decode_error": "missing hostname TLV",
+        "input": {
+            "beacon": "moneysocket1qqssqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqc9qqpsqqgqwld73w",
+            "beacon_data_part_chunks": [
+                "0021",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0305",
+                "0003",
+                "000100",
+                ""
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "websocket location with generator_preference missing hostname"
     },
-    "decode_error": "missing hostname TLV"
-},
-{
-    "test_name": "websocket location with invalid hostname",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0035", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0319", # location_list TL
-            "0017", # websocket location TL
-            "000100", # generator_preference TLV
-            "0112", # hostname TL
-            "000000000000000000000000000000000000" # hostname V (all null)
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qq6sqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqceqqtsqqgqqyfqqqqqqqqqqqqqqqqqqqqqqqqqqqqqyvj32k"
+    {
+        "decode_error": "invalid hostname",
+        "input": {
+            "beacon": "moneysocket1qq6sqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqceqqtsqqgqqyfqqqqqqqqqqqqqqqqqqqqqqqqqqqqqyvj32k",
+            "beacon_data_part_chunks": [
+                "0035",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0319",
+                "0017",
+                "000100",
+                "0112",
+                "000000000000000000000000000000000000"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "websocket location with invalid hostname"
     },
-    "decode_error": "invalid hostname"
-},
-{
-    "test_name": "websocket location with invalid hostname unicode",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0035", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0319", # location_list TL
-            "0017", # websocket location TL
-            "000100", # generator_preference TLV
-            "0112", # hostname TL
-            "ffffffffffffffffffffffffffffffffffff" # hostname V (all 0xff)
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qq6sqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqceqqtsqqgqqyf0llllllllllllllllllllllllllllhkcyuh"
+    {
+        "decode_error": "error decoding hostname string",
+        "input": {
+            "beacon": "moneysocket1qq6sqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqceqqtsqqgqqyf0llllllllllllllllllllllllllllhkcyuh",
+            "beacon_data_part_chunks": [
+                "0035",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0319",
+                "0017",
+                "000100",
+                "0112",
+                "ffffffffffffffffffffffffffffffffffff"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "websocket location with invalid hostname unicode"
     },
-    "decode_error": "error decoding hostname string"
-},
-{
-    "test_name": "websocket location with bad use_tls (1)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0034", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0318", # location_list TL
-            "0016", # websocket location TL
-            "011272656c61792e736f636b65742e6d6f6e6579" # hostname TLV
-            "0200" # use_tls TLV (no value)
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qq6qqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqccqqtqzynjv4kxz7fwwdhkx6m9wshx6mmwv4usyqq2vjzjg"
+    {
+        "decode_error": "underrun while popping a u8",
+        "input": {
+            "beacon": "moneysocket1qq6qqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqccqqtqzynjv4kxz7fwwdhkx6m9wshx6mmwv4usyqq2vjzjg",
+            "beacon_data_part_chunks": [
+                "0034",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0318",
+                "0016",
+                "011272656c61792e736f636b65742e6d6f6e6579",
+                "0200"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "websocket location with bad use_tls (1)"
     },
-    "decode_error": "underrun while popping a u8"
-},
-{
-    "test_name": "websocket location with bad use_tls (2)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0035", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0319", # location_list TL
-            "0017", # websocket location TL
-            "011272656c61792e736f636b65742e6d6f6e6579" # hostname TLV
-            "020133" # use_tls TLV (bad value)
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qq6sqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqceqqtszynjv4kxz7fwwdhkx6m9wshx6mmwv4usyqfndeqp7x"
+    {
+        "decode_error": "unknown use_tls setting",
+        "input": {
+            "beacon": "moneysocket1qq6sqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqceqqtszynjv4kxz7fwwdhkx6m9wshx6mmwv4usyqfndeqp7x",
+            "beacon_data_part_chunks": [
+                "0035",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0319",
+                "0017",
+                "011272656c61792e736f636b65742e6d6f6e6579",
+                "020133"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "websocket location with bad use_tls (2)"
     },
-    "decode_error": "unknown use_tls setting"
-},
-{
-    "test_name": "websocket location with bad use_tls (3)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0036", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "031a", # location_list TL
-            "0018", # websocket location TL
-            "011272656c61792e736f636b65742e6d6f6e6579" # hostname TLV
-            "02020044" # use_tls TLV (extra byte)
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqmqqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqc6qqvqzynjv4kxz7fwwdhkx6m9wshx6mmwv4usyqsqgswkwnlv"
+    {
+        "decode_error": "extra use_tls bytes",
+        "input": {
+            "beacon": "moneysocket1qqmqqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqc6qqvqzynjv4kxz7fwwdhkx6m9wshx6mmwv4usyqsqgswkwnlv",
+            "beacon_data_part_chunks": [
+                "0036",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "031a",
+                "0018",
+                "011272656c61792e736f636b65742e6d6f6e6579",
+                "02020044"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "websocket location with bad use_tls (3)"
     },
-    "decode_error": "extra use_tls bytes"
-},
-{
-    "test_name": "websocket location with bad use_tls (4)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0035", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0319", # location_list TL
-            "0017", # websocket location TL
-            "011272656c61792e736f636b65742e6d6f6e6579" # hostname TLV
-            "020101" # use_tls TLV (default value)
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qq6sqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqceqqtszynjv4kxz7fwwdhkx6m9wshx6mmwv4usyqgpyqxqn7"
+    {
+        "decode_error": "use_tls not minimally encoded",
+        "input": {
+            "beacon": "moneysocket1qq6sqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqceqqtszynjv4kxz7fwwdhkx6m9wshx6mmwv4usyqgpyqxqn7",
+            "beacon_data_part_chunks": [
+                "0035",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0319",
+                "0017",
+                "011272656c61792e736f636b65742e6d6f6e6579",
+                "020101"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "websocket location with bad use_tls (4)"
     },
-    "decode_error": "use_tls not minimally encoded"
-},
-{
-    "test_name": "websocket location with bad port (1)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0039", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "031d", # location_list TL
-            "001b", # websocket location TL
-            "011272656c61792e736f636b65742e6d6f6e6579" # hostname TLV
-            "020100" # use_tls TLV
-            "03022233" # port TLV (extra byte)
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqusqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqcaqqdszynjv4kxz7fwwdhkx6m9wshx6mmwv4usyqgqqvpzyvclp4n9t"
+    {
+        "decode_error": "extra port bytes",
+        "input": {
+            "beacon": "moneysocket1qqusqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqcaqqdszynjv4kxz7fwwdhkx6m9wshx6mmwv4usyqgqqvpzyvclp4n9t",
+            "beacon_data_part_chunks": [
+                "0039",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "031d",
+                "001b",
+                "011272656c61792e736f636b65742e6d6f6e6579",
+                "020100",
+                "03022233"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "websocket location with bad port (1)"
     },
-    "decode_error": "extra port bytes"
-},
-{
-    "test_name": "websocket location with bad port (2)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0037", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "031b", # location_list TL
-            "0019", # websocket location TL
-            "011272656c61792e736f636b65742e6d6f6e6579" # hostname TLV
-            "020100" # use_tls TLV
-            "0300" # port TLV (missing byte)
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqmsqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqcmqqvszynjv4kxz7fwwdhkx6m9wshx6mmwv4usyqgqqvqqfryxcx"
+    {
+        "decode_error": "underrun while peeking a uint8",
+        "input": {
+            "beacon": "moneysocket1qqmsqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqcmqqvszynjv4kxz7fwwdhkx6m9wshx6mmwv4usyqgqqvqqfryxcx",
+            "beacon_data_part_chunks": [
+                "0037",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "031b",
+                "0019",
+                "011272656c61792e736f636b65742e6d6f6e6579",
+                "020100",
+                "0300"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "websocket location with bad port (2)"
     },
-    "decode_error": "underrun while peeking a uint8"
-},
-{
-    "test_name": "websocket location with bad port (3)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "003D", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0321", # location_list TL
-            "001f", # websocket location TL
-            "011272656c61792e736f636b65742e6d6f6e6579" # hostname TLV 12
-            "0309ffffffffffffffffff"
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qq7sqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqepqq0szynjv4kxz7fwwdhkx6m9wshx6mmwv4usxz0lllllllllllll7q8y2yx"
+    {
+        "decode_error": "port value too large",
+        "input": {
+            "beacon": "moneysocket1qq7sqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqepqq0szynjv4kxz7fwwdhkx6m9wshx6mmwv4usxz0lllllllllllll7q8y2yx",
+            "beacon_data_part_chunks": [
+                "003D",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0321",
+                "001f",
+                "011272656c61792e736f636b65742e6d6f6e6579",
+                "0309ffffffffffffffffff"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "websocket location with bad port (3)"
     },
-    "decode_error": "port value too large"
-},
-{
-    "test_name": "websocket location with bad port (4)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0038", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "031c", # location_list TL
-            "001a", # websocket location TL
-            "011272656c61792e736f636b65742e6d6f6e6579" # hostname TLV
-            "020100" # use_tls TLV
-            "030150" # port TLV (default value use_tls = False)
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qquqqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqcuqqdqzynjv4kxz7fwwdhkx6m9wshx6mmwv4usyqgqqvq4qztrtze"
+    {
+        "decode_error": "port not minimally encoded",
+        "input": {
+            "beacon": "moneysocket1qquqqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqcuqqdqzynjv4kxz7fwwdhkx6m9wshx6mmwv4usyqgqqvq4qztrtze",
+            "beacon_data_part_chunks": [
+                "0038",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "031c",
+                "001a",
+                "011272656c61792e736f636b65742e6d6f6e6579",
+                "020100",
+                "030150"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "websocket location with bad port (4)"
     },
-    "decode_error": "port not minimally encoded"
-},
-{
-    "test_name": "websocket location with bad port (5)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0037", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "031b", # location_list TL
-            "0019", # websocket location TL
-            "011272656c61792e736f636b65742e6d6f6e6579" # hostname TLV
-            "0303fd01bb" # port TLV (default value use_tls = True)
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqmsqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqcmqqvszynjv4kxz7fwwdhkx6m9wshx6mmwv4usxqlaqxas7hf6xv"
+    {
+        "decode_error": "port not minimally encoded",
+        "input": {
+            "beacon": "moneysocket1qqmsqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqcmqqvszynjv4kxz7fwwdhkx6m9wshx6mmwv4usxqlaqxas7hf6xv",
+            "beacon_data_part_chunks": [
+                "0037",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "031b",
+                "0019",
+                "011272656c61792e736f636b65742e6d6f6e6579",
+                "0303fd01bb"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "websocket location with bad port (5)"
     },
-    "decode_error": "port not minimally encoded"
-},
-{
-    "test_name": "websocket location with bad path (1)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0034", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "0318", # location_list TL
-            "0016", # websocket location TL
-            "011272656c61792e736f636b65742e6d6f6e6579" # hostname TLV
-            "0400" # path TLV (empty string)
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qq6qqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqccqqtqzynjv4kxz7fwwdhkx6m9wshx6mmwv4usgqqj59s6v"
+    {
+        "decode_error": "path not minimally encoded",
+        "input": {
+            "beacon": "moneysocket1qq6qqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqccqqtqzynjv4kxz7fwwdhkx6m9wshx6mmwv4usgqqj59s6v",
+            "beacon_data_part_chunks": [
+                "0034",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "0318",
+                "0016",
+                "011272656c61792e736f636b65742e6d6f6e6579",
+                "0400"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "websocket location with bad path (1)"
     },
-    "decode_error": "path not minimally encoded"
-},
-{
-    "test_name": "websocket location with bad path (2)",
-    "input": {
-        "beacon_data_part_chunks": [
-            "0037", # beacon TL
-            "0003000102", # generator_version TLV
-            "010100", # role_hint TLV
-            "0210a68bd6e9a77e3346c22063a3dec66780", # shared_seed TLV
-            "031b", # location_list TL
-            "0019", # websocket location TL
-            "011272656c61792e736f636b65742e6d6f6e6579" # hostname TLV
-            "0403ffffff" # path TLV (path is "  ?")
-        ],
-        "beacon_hrp": "moneysocket",
-        "beacon": "moneysocket1qqmsqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqcmqqvszynjv4kxz7fwwdhkx6m9wshx6mmwv4usgqlllllsj2ev7n"
-    },
-    "decode_error": "error decoding path"
-},
+    {
+        "decode_error": "error decoding path",
+        "input": {
+            "beacon": "moneysocket1qqmsqqcqqypqzqgqqgg2dz7kaxnhuv6xcgsx8g77cencqqcmqqvszynjv4kxz7fwwdhkx6m9wshx6mmwv4usgqlllllsj2ev7n",
+            "beacon_data_part_chunks": [
+                "0037",
+                "0003000102",
+                "010100",
+                "0210a68bd6e9a77e3346c22063a3dec66780",
+                "031b",
+                "0019",
+                "011272656c61792e736f636b65742e6d6f6e6579",
+                "0403ffffff"
+            ],
+            "beacon_hrp": "moneysocket"
+        },
+        "test_name": "websocket location with bad path (2)"
+    }
 ]
+"""
+
+DECODE_ERROR_VECTORS = json.loads(DECODE_ERROR_VECTORS_JSON)
 
 class TestBeaconEncode(unittest.TestCase):
     def xxx_test_boof(self):
