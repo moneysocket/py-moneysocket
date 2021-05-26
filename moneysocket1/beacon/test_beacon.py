@@ -29,19 +29,7 @@ DECODE_ERROR_VECTORS = load_json_file(
 
 
 class TestBeaconEncode(unittest.TestCase):
-    def xxx_test_boof(self):
-        locations = [WebsocketLocation("relay.socket.money"),
-                     UnknownLocation(1234, b'abc123')]
-        b = Beacon(role_hint=ROLE_HINT_AUTOMATIC_GENERATOR, locations=locations)
-        b1_32 = b.to_bech32()
-        print(b1_32)
-        b1_j = b.to_json()
-        print(b1_j)
-        b2, err = Beacon.from_bech32(b1_32)
-        print(err)
-        print(b2.to_json())
-
-    def xxx_test_encode_decode(self):
+    def test_encode_decode(self):
         self.maxDiff = None
         for test in ENCODE_DECODE_VECTORS:
             print("running: %s" % test["test_name"])
