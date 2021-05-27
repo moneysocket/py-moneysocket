@@ -15,6 +15,7 @@ BTC = {"code":      "BTC",
        "symbol":    "₿"}
 
 CODES_WITH_ISO_NUM_ASSIGNED = set(FIAT.keys())
+CODE_BY_ISO_NUM = {f['iso_num']: f['code'] for f in FIAT.values()}
 
 MSAT_PER_SAT = 1000.0
 SATS_PER_BTC = 100000000.0
@@ -47,12 +48,12 @@ class NonBtc():
     @staticmethod
     def from_dict(non_btc_dict):
         if 'units' not in non_btc_dict:
-            return None, "no units value"
+            return None, "no units value given"
         if type(non_btc_dict['units']) not in {float, int}:
-            return "units not integer or float"
+            return None, "units is not an integer or float"
         units = non_btc_dict['units']
         if 'name' not in non_btc_dict:
-            return None, "no name value"
+            return None, "no name value given"
         if type(non_btc_dict['name']) != str:
             return None, "name value not string"
         if non_btc_dict['name'] == "":
@@ -65,37 +66,41 @@ class NonBtc():
         fmt_decimals = None
         if 'rate_timestamp' in non_btc_dict:
             if type(non_btc_dict['rate_timestamp']) not in {float, int}:
-                return None, "rate_timestamp not integer or float"
+                return None, "rate_timestamp is not an integer or float"
             if non_btc_dict['rate_timestamp'] < 0:
                 return None, "rate_timestamp negative"
             rate_timestamp = non_btc_dict['rate_timestamp']
         if 'iso_num' in non_btc_dict:
             if type(non_btc_dict['iso_num']) != int:
-                return None, "iso_num not iteger"
+                return None, "iso_num is not an integer"
             if non_btc_dict['iso_num'] < 0:
-                return None, "iso_num not positive"
+                return None, "iso_num is not positive"
             iso_num = non_btc_dict['iso_num']
             if 'code' not in non_btc_dict:
                 return None, "iso_num without code"
             if type(non_btc_dict['code']) != str:
-                return None, "code value with iso_num not string"
+                return None, "code value with iso_num is not string"
             if non_btc_dict['code'] == "":
                 return None, "code value with iso_num is empty string"
+            expected_code = (CODE_BY_ISO_NUM[iso_num] if iso_num in
+                             CODE_BY_ISO_NUM else None)
+            if expected_code and non_btc_dict['code'] != expected_code:
+                return None, "iso_num and code mismatch"
         else:
+            if 'code' not in non_btc_dict:
+                return None, "code value not set"
+            if type(non_btc_dict['code']) != str:
+                return None, "code value is not string"
             if non_btc_dict['code'] in CODES_WITH_ISO_NUM_ASSIGNED:
                 return None, 'using non-standard code with iso_num assigned'
-        if 'code' not in non_btc_dict:
-            return None, "code value not set"
-        if type(non_btc_dict['code']) != str:
-            return None, "code value with is string"
-        if non_btc_dict != "" and len(non_btc_dict['code']) > 12:
+        if non_btc_dict['code'] != "" and len(non_btc_dict['code']) > 12:
             return None, "code value longer than twelve characters"
-        if non_btc_dict != "" and len(non_btc_dict['code']) < 3:
+        if non_btc_dict['code'] != "" and len(non_btc_dict['code']) < 3:
             return None, "code value less than three characters"
         code = non_btc_dict['code']
         if 'symbol' not in non_btc_dict:
             return None, "symbol value not set"
-        if type(non_btc_dict) != str:
+        if type(non_btc_dict['symbol']) != str:
             return None, "symbol value not string type"
         if len(non_btc_dict['symbol']) > 6:
             return None, "symbol value string too long"
@@ -145,12 +150,15 @@ class Wad():
         if type(wad_dict['msat']) not in {float, int}:
             return None, "invalid type of msat value"
         if 'non_btc' not in wad_dict:
-            return None, "no wad_dict value given"
+            return None, "no non_btc value given"
+        if (wad_dict['non_btc'] is not None and
+            type(wad_dict['non_btc']) != dict):
+            return None, "invald type of non_btc value"
         non_btc = None
         if wad_dict['non_btc']:
             non_btc, err = NonBtc.from_dict(wad_dict['non_btc'])
             if err:
-                return err, None
+                return None, err
         if len(wad_dict.keys()) != 2:
             return None, "extra keys in wad_dict"
         return Wad(wad_dict['msat'], non_btc=non_btc), None

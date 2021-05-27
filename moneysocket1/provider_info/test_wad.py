@@ -18,6 +18,9 @@ def load_json_file(path):
 PATH = os.path.dirname(os.path.abspath(__file__))
 ENCODE_VECTORS = load_json_file(
     os.path.join(PATH, "../../test_vectors/02-wad-encode.json"))
+DECODE_ERROR_VECTORS = load_json_file(
+    os.path.join(PATH, "../../test_vectors/02-wad-decode-error.json"))
+
 
 class TestWad(unittest.TestCase):
     def test_wad_encode(self):
@@ -25,7 +28,16 @@ class TestWad(unittest.TestCase):
             print("running: %s" % v['test_name'])
             w, err = Wad.from_dict(v['wad'])
             self.assertEqual(err, None)
-            s = str(w)
+            got_fmt = str(w)
+            want_fmt = v['string_fmt']
+            self.assertEqual(got_fmt, want_fmt)
             v_str = json.dumps(v['wad'], sort_keys=True, indent=1)
             got_str = w.to_json()
             self.assertEqual(v_str, got_str)
+
+    def test_wad_decode_error(self):
+        for v in DECODE_ERROR_VECTORS:
+            print("running: %s" % v['test_name'])
+            w, err = Wad.from_dict(v['input'])
+            self.assertEqual(w, None)
+            self.assertEqual(err, v['decode_error'])
