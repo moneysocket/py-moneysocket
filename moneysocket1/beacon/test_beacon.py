@@ -23,9 +23,9 @@ def load_json_file(path):
 
 PATH = os.path.dirname(os.path.abspath(__file__))
 ENCODE_DECODE_VECTORS = load_json_file(
-    os.path.join(PATH, "../../test_vectors/01-beacon-encode-decode.json"))
+    os.path.join(PATH, "../../test_vectors/02-beacon-encode-decode.json"))
 DECODE_ERROR_VECTORS = load_json_file(
-    os.path.join(PATH, "../../test_vectors/01-beacon-decode-error.json"))
+    os.path.join(PATH, "../../test_vectors/02-beacon-decode-error.json"))
 
 
 class TestBeaconEncode(unittest.TestCase):

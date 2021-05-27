@@ -17,9 +17,9 @@ def load_json_file(path):
 
 PATH = os.path.dirname(os.path.abspath(__file__))
 ENCODE_VECTORS = load_json_file(
-    os.path.join(PATH, "../../test_vectors/02-wad-encode.json"))
+    os.path.join(PATH, "../../test_vectors/03-wad-encode.json"))
 DECODE_ERROR_VECTORS = load_json_file(
-    os.path.join(PATH, "../../test_vectors/02-wad-decode-error.json"))
+    os.path.join(PATH, "../../test_vectors/03-wad-decode-error.json"))
 
 
 class TestWad(unittest.TestCase):
