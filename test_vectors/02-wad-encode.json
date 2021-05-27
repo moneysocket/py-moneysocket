@@ -1,0 +1,60 @@
+[
+    {
+        "string_fmt": "\u20bf 12.345 sat",
+        "test_name": "normal bitcoin wad",
+        "wad": {
+            "msat": 12345,
+            "non_btc": null
+        }
+    },
+    {
+        "string_fmt": "\u20bf 12.346 sat",
+        "test_name": "sub-msat bitcoin wad",
+        "wad": {
+            "msat": 12345.678,
+            "non_btc": null
+        }
+    },
+    {
+        "string_fmt": "$ 123.46 USD",
+        "test_name": "normal USD wad",
+        "wad": {
+            "msat": 12345678,
+            "non_btc": {
+                "code": "USD",
+                "fmt_decimals": 2,
+                "iso_num": 840,
+                "name": "United States dollar",
+                "rate_timestamp": 1622048707.3,
+                "symbol": "$",
+                "units": 123.456
+            }
+        }
+    },
+    {
+        "string_fmt": "\ud83e\udd52 69 CUCUMBER",
+        "test_name": "oddball asset wad",
+        "wad": {
+            "msat": 12345678,
+            "non_btc": {
+                "code": "CUCUMBER",
+                "name": "Cucumber vegetables",
+                "symbol": "\ud83e\udd52",
+                "units": 69.42
+            }
+        }
+    },
+    {
+        "string_fmt": "77",
+        "test_name": "minimal information wad",
+        "wad": {
+            "msat": 12345678,
+            "non_btc": {
+                "code": "",
+                "name": "Alf buck",
+                "symbol": "",
+                "units": 77
+            }
+        }
+    }
+]

@@ -1,0 +1,390 @@
+[
+    {
+        "decode_error": "no msat value given",
+        "input": {
+            "non_btc": null
+        },
+        "test_name": "missing msat"
+    },
+    {
+        "decode_error": "invalid type of msat value",
+        "input": {
+            "msat": "hello",
+            "non_btc": null
+        },
+        "test_name": "wrong msat value"
+    },
+    {
+        "decode_error": "no non_btc value given",
+        "input": {
+            "msat": 12345
+        },
+        "test_name": "no non_btc value"
+    },
+    {
+        "decode_error": "extra keys in wad_dict",
+        "input": {
+            "foo": "bar",
+            "msat": 12345,
+            "non_btc": null
+        },
+        "test_name": "extra key"
+    },
+    {
+        "decode_error": "no units value given",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "USD",
+                "fmt_decimals": 2,
+                "iso_num": 840,
+                "name": "United States dollar",
+                "rate_timestamp": 1622048707.3,
+                "symbol": "$"
+            }
+        },
+        "test_name": "missing units"
+    },
+    {
+        "decode_error": "units is not an integer or float",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "USD",
+                "fmt_decimals": 2,
+                "iso_num": 840,
+                "name": "United States dollar",
+                "rate_timestamp": 1622048707.3,
+                "symbol": "$",
+                "units": null
+            }
+        },
+        "test_name": "wrong units type"
+    },
+    {
+        "decode_error": "no name value given",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "USD",
+                "fmt_decimals": 2,
+                "iso_num": 840,
+                "rate_timestamp": 1622048707.3,
+                "symbol": "$",
+                "units": 123.45
+            }
+        },
+        "test_name": "missing name"
+    },
+    {
+        "decode_error": "name value not string",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "USD",
+                "fmt_decimals": 2,
+                "iso_num": 840,
+                "name": {},
+                "rate_timestamp": 1622048707.3,
+                "symbol": "$",
+                "units": 123.45
+            }
+        },
+        "test_name": "wrong name type"
+    },
+    {
+        "decode_error": "name value is empty string",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "USD",
+                "fmt_decimals": 2,
+                "iso_num": 840,
+                "name": "",
+                "rate_timestamp": 1622048707.3,
+                "symbol": "$",
+                "units": 123.45
+            }
+        },
+        "test_name": "name is empty string"
+    },
+    {
+        "decode_error": "rate_timestamp is not an integer or float",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "USD",
+                "fmt_decimals": 2,
+                "iso_num": 840,
+                "name": "United States dollar",
+                "rate_timestamp": "last week",
+                "symbol": "$",
+                "units": 123.45
+            }
+        },
+        "test_name": "rate timestamp is wrong type"
+    },
+    {
+        "decode_error": "rate_timestamp negative",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "USD",
+                "fmt_decimals": 2,
+                "iso_num": 840,
+                "name": "United States dollar",
+                "rate_timestamp": -123,
+                "symbol": "$",
+                "units": 123.45
+            }
+        },
+        "test_name": "rate_timestamp negative number"
+    },
+    {
+        "decode_error": "iso_num is not an integer",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "USD",
+                "fmt_decimals": 2,
+                "iso_num": 840.3,
+                "name": "United States dollar",
+                "symbol": "$",
+                "units": 123.45
+            }
+        },
+        "test_name": "iso_num is wrong type"
+    },
+    {
+        "decode_error": "iso_num is not positive",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "USD",
+                "fmt_decimals": 2,
+                "iso_num": -33,
+                "name": "United States dollar",
+                "symbol": "$",
+                "units": 123.45
+            }
+        },
+        "test_name": "iso_num is not positive"
+    },
+    {
+        "decode_error": "iso_num without code",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "fmt_decimals": 2,
+                "iso_num": 840,
+                "name": "United States dollar",
+                "symbol": "$",
+                "units": 123.45
+            }
+        },
+        "test_name": "iso_num without code"
+    },
+    {
+        "decode_error": "code value with iso_num is not string",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": [],
+                "fmt_decimals": 2,
+                "iso_num": 840,
+                "name": "United States dollar",
+                "symbol": "$",
+                "units": 123.45
+            }
+        },
+        "test_name": "iso_num with code not string"
+    },
+    {
+        "decode_error": "code value with iso_num is empty string",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "",
+                "fmt_decimals": 2,
+                "iso_num": 840,
+                "name": "United States dollar",
+                "symbol": "$",
+                "units": 123.45
+            }
+        },
+        "test_name": "iso_num with code being empty string"
+    },
+    {
+        "decode_error": "iso_num and code mismatch",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "GBP",
+                "fmt_decimals": 2,
+                "iso_num": 840,
+                "name": "United States dollar",
+                "symbol": "$",
+                "units": 123.45
+            }
+        },
+        "test_name": "unexpected code that doesn't match iso_num"
+    },
+    {
+        "decode_error": "code value not set",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "fmt_decimals": 2,
+                "name": "United States dollar",
+                "symbol": "$",
+                "units": 123.45
+            }
+        },
+        "test_name": "no code value set"
+    },
+    {
+        "decode_error": "code value is not string",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": null,
+                "fmt_decimals": 2,
+                "name": "United States dollar",
+                "symbol": "$",
+                "units": 123.45
+            }
+        },
+        "test_name": "code value is not a string"
+    },
+    {
+        "decode_error": "using non-standard code with iso_num assigned",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "USD",
+                "fmt_decimals": 2,
+                "name": "United States dollar",
+                "symbol": "$",
+                "units": 123.45
+            }
+        },
+        "test_name": "using code of a currency with an iso_num assigned, but no iso_num given"
+    },
+    {
+        "decode_error": "code value longer than twelve characters",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "AREALLYLONGCODE",
+                "fmt_decimals": 2,
+                "name": "United States dollar",
+                "symbol": "$",
+                "units": 123.45
+            }
+        },
+        "test_name": "long code string"
+    },
+    {
+        "decode_error": "code value less than three characters",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "X",
+                "fmt_decimals": 2,
+                "name": "United States dollar",
+                "symbol": "$",
+                "units": 123.45
+            }
+        },
+        "test_name": "short code string"
+    },
+    {
+        "decode_error": "symbol value not set",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "USD",
+                "fmt_decimals": 2,
+                "iso_num": 840,
+                "name": "United States dollar",
+                "units": 123.45
+            }
+        },
+        "test_name": "no symbol value"
+    },
+    {
+        "decode_error": "symbol value not string type",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "USD",
+                "fmt_decimals": 2,
+                "iso_num": 840,
+                "name": "United States dollar",
+                "symbol": [],
+                "units": 123.45
+            }
+        },
+        "test_name": "symbol value not a string"
+    },
+    {
+        "decode_error": "symbol value string too long",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "USD",
+                "fmt_decimals": 2,
+                "iso_num": 840,
+                "name": "United States dollar",
+                "symbol": "$$$$$$$$$",
+                "units": 123.45
+            }
+        },
+        "test_name": "symbol value too long"
+    },
+    {
+        "decode_error": "fmt_decimals not integer",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "USD",
+                "fmt_decimals": "",
+                "iso_num": 840,
+                "name": "United States dollar",
+                "symbol": "$",
+                "units": 123.45
+            }
+        },
+        "test_name": "fmt_decimals wrong type"
+    },
+    {
+        "decode_error": "fmt_decimals negative value",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "USD",
+                "fmt_decimals": -123,
+                "iso_num": 840,
+                "name": "United States dollar",
+                "symbol": "$",
+                "units": 123.45
+            }
+        },
+        "test_name": "fmt_decimals negative"
+    },
+    {
+        "decode_error": "fmt_decimals too large",
+        "input": {
+            "msat": 12345,
+            "non_btc": {
+                "code": "USD",
+                "fmt_decimals": 123,
+                "iso_num": 840,
+                "name": "United States dollar",
+                "symbol": "$",
+                "units": 123.45
+            }
+        },
+        "test_name": "fmt_decimals too large"
+    }
+]
