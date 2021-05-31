@@ -1,0 +1,172 @@
+[
+    {
+        "provider_info": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": false,
+            "payer": true,
+            "public_keys": {
+                "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03": {
+                    "curve": "secp256k1",
+                    "features": [
+                        "SCHNORR_SIGN_ARMOR",
+                        "SCHNORR_SIGN_BINARY",
+                        "ENCRYPT_BIN",
+                        "DECRYPT_BIN"
+                    ],
+                    "friendly_name": "UnicornPrincess"
+                }
+            },
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "basic provider info"
+    },
+    {
+        "provider_info": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": true,
+            "public_keys": {},
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "no public keys"
+    },
+    {
+        "provider_info": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "another_key": "some data",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": true,
+            "public_keys": {
+                "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03": {
+                    "curve": "secp256k1",
+                    "features": [
+                        "SCHNORR_SIGN_ARMOR",
+                        "SCHNORR_SIGN_BINARY",
+                        "ENCRYPT_BIN",
+                        "DECRYPT_BIN"
+                    ],
+                    "friendly_name": "UnicornPrincess"
+                }
+            },
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "extra object field"
+    },
+    {
+        "provider_info": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {
+                "FEATURE_ONE": "some data"
+            },
+            "features": [
+                "FEATURE_ONE",
+                "FEATURE_TWO"
+            ],
+            "payee": true,
+            "payer": true,
+            "public_keys": {
+                "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03": {
+                    "curve": "secp256k1",
+                    "features": [
+                        "SCHNORR_SIGN_ARMOR",
+                        "SCHNORR_SIGN_BINARY",
+                        "ENCRYPT_BIN",
+                        "DECRYPT_BIN"
+                    ],
+                    "friendly_name": "UnicornPrincess"
+                }
+            },
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "features"
+    },
+    {
+        "provider_info": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": true,
+            "public_keys": {
+                "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03": {
+                    "curve": "secp256k1",
+                    "features": [
+                        "SCHNORR_SIGN_ARMOR",
+                        "SCHNORR_SIGN_BINARY",
+                        "ENCRYPT_BIN",
+                        "DECRYPT_BIN"
+                    ]
+                }
+            },
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "no public key friendly name"
+    },
+    {
+        "provider_info": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": true,
+            "public_keys": {
+                "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03": {
+                    "curve": "secp256k1",
+                    "features": []
+                }
+            },
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "no public key features"
+    },
+    {
+        "provider_info": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": true,
+            "public_keys": {
+                "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03": {
+                    "another_thing": "some data",
+                    "curve": "secp256k1",
+                    "features": [
+                        "SCHNORR_SIGN_ARMOR",
+                        "SCHNORR_SIGN_BINARY",
+                        "ENCRYPT_BIN",
+                        "DECRYPT_BIN"
+                    ]
+                }
+            },
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "extra public key name/value"
+    }
+]

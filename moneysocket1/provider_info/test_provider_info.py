@@ -6,7 +6,7 @@ import os
 import unittest
 import json
 
-from .wad import Wad
+from .provider_info import ProviderInfo
 
 def load_json_file(path):
     f = open(path, "r")
@@ -17,27 +17,23 @@ def load_json_file(path):
 
 PATH = os.path.dirname(os.path.abspath(__file__))
 ENCODE_VECTORS = load_json_file(
-    os.path.join(PATH, "../../test_vectors/03-wad-encode.json"))
+    os.path.join(PATH, "../../test_vectors/03-provider-info-encode.json"))
 DECODE_ERROR_VECTORS = load_json_file(
-    os.path.join(PATH, "../../test_vectors/03-wad-decode-error.json"))
+    os.path.join(PATH, "../../test_vectors/03-provider-info-decode-error.json"))
 
-
-class TestWad(unittest.TestCase):
-    def test_wad_encode(self):
+class TestProviderInfo(unittest.TestCase):
+    def test_provider_info_encode(self):
         for v in ENCODE_VECTORS:
             print("running: %s" % v['test_name'])
-            w, err = Wad.from_dict(v['wad'])
+            provider_info, err = ProviderInfo.from_dict(v['provider_info'])
             self.assertEqual(err, None)
-            got_fmt = str(w)
-            want_fmt = v['string_fmt']
-            self.assertEqual(got_fmt, want_fmt)
-            v_str = json.dumps(v['wad'], sort_keys=True, indent=1)
-            got_str = w.to_json()
+            v_str = json.dumps(v['provider_info'], sort_keys=True, indent=1)
+            got_str = provider_info.to_json()
             self.assertEqual(v_str, got_str)
 
-    def test_wad_decode_error(self):
+    def test_provider_info_decode_err(self):
         for v in DECODE_ERROR_VECTORS:
             print("running: %s" % v['test_name'])
-            w, err = Wad.from_dict(v['input'])
-            self.assertEqual(w, None)
+            provider_info, err = ProviderInfo.from_dict(v['input'])
+            self.assertEqual(provider_info, None)
             self.assertEqual(err, v['decode_error'])

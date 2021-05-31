@@ -1,0 +1,589 @@
+[
+    {
+        "decode_error": "no account_uuid included",
+        "input": {
+            "feature_data": {},
+            "features": [],
+            "payee": false,
+            "payer": true,
+            "public_keys": {},
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "no account_uuid"
+    },
+    {
+        "decode_error": "account_uuid type is not a string",
+        "input": {
+            "account_uuid": null,
+            "feature_data": {},
+            "features": [],
+            "payee": false,
+            "payer": true,
+            "public_keys": {},
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "account_uuid different type"
+    },
+    {
+        "decode_error": "invalid account_uuid",
+        "input": {
+            "account_uuid": "asdfasdfa",
+            "feature_data": {},
+            "features": [],
+            "payee": false,
+            "payer": true,
+            "public_keys": {},
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "account_uuid invalid"
+    },
+    {
+        "decode_error": "account_uuid is not uuid version 4",
+        "input": {
+            "account_uuid": "b032ee60-c23c-11eb-a86b-08606ee5ade6",
+            "feature_data": {},
+            "features": [],
+            "payee": false,
+            "payer": true,
+            "public_keys": {},
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "non-v4 account_uuid"
+    },
+    {
+        "decode_error": "wad value not included",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": false,
+            "payer": true,
+            "public_keys": {}
+        },
+        "test_name": "no wad included"
+    },
+    {
+        "decode_error": "wad value not an object",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": false,
+            "payer": true,
+            "public_keys": {},
+            "wad": "abc"
+        },
+        "test_name": "wad value wrong type"
+    },
+    {
+        "decode_error": "invalid wad: no msat value given",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": false,
+            "payer": true,
+            "public_keys": {},
+            "wad": {
+                "BitCoin": 6.15
+            }
+        },
+        "test_name": "invalid wad"
+    },
+    {
+        "decode_error": "no payee setting included",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payer": true,
+            "public_keys": {},
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "no payee setting"
+    },
+    {
+        "decode_error": "payee must be boolean type",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": null,
+            "payer": true,
+            "public_keys": {},
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "no payee setting"
+    },
+    {
+        "decode_error": "no payer setting included",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "public_keys": {},
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "no payer setting"
+    },
+    {
+        "decode_error": "payer must be boolean type",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": null,
+            "public_keys": {},
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "no payer setting"
+    },
+    {
+        "decode_error": "features value not included",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "payee": true,
+            "payer": true,
+            "public_keys": {},
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "no features value"
+    },
+    {
+        "decode_error": "features value must be a list",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": "some features",
+            "payee": true,
+            "payer": true,
+            "public_keys": {},
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "features value wrong type"
+    },
+    {
+        "decode_error": "features list entry not a string",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [
+                "feature1",
+                123
+            ],
+            "payee": true,
+            "payer": true,
+            "public_keys": {},
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "features list with non-string value"
+    },
+    {
+        "decode_error": "feature_data for undeclared feature",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {
+                "feature3": 123
+            },
+            "features": [
+                "feature1",
+                "feature2"
+            ],
+            "payee": true,
+            "payer": true,
+            "public_keys": {},
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "feature_data key for feature not in features"
+    },
+    {
+        "decode_error": "feature_data value is null",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {
+                "feature1": null
+            },
+            "features": [
+                "feature1",
+                "feature2"
+            ],
+            "payee": true,
+            "payer": true,
+            "public_keys": {},
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "null feature_data"
+    },
+    {
+        "decode_error": "public_keys value not included",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": true,
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "no public keys info"
+    },
+    {
+        "decode_error": "public_keys value not object type",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": true,
+            "public_keys": "hello world",
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "no public keys info"
+    },
+    {
+        "decode_error": "public key not interpretable as bytes",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": true,
+            "public_keys": {
+                "a string that is not a hex value": {
+                    "curve": "secp256k1",
+                    "features": [
+                        "SCHNORR_SIGN_ARMOR",
+                        "SCHNORR_SIGN_BINARY",
+                        "ENCRYPT_BIN",
+                        "DECRYPT_BIN"
+                    ],
+                    "friendly_name": "UnicornPrincess"
+                }
+            },
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "public key not hex"
+    },
+    {
+        "decode_error": "public key info value not object type",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": true,
+            "public_keys": {
+                "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03": null
+            },
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "null public key data"
+    },
+    {
+        "decode_error": "curve of public key not specified",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": true,
+            "public_keys": {
+                "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03": {
+                    "features": [
+                        "SCHNORR_SIGN_ARMOR",
+                        "SCHNORR_SIGN_BINARY",
+                        "ENCRYPT_BIN",
+                        "DECRYPT_BIN"
+                    ],
+                    "friendly_name": "UnicornPrincess"
+                }
+            },
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "public key curve not given"
+    },
+    {
+        "decode_error": "curve value not a string",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": true,
+            "public_keys": {
+                "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03": {
+                    "curve": null,
+                    "features": [
+                        "SCHNORR_SIGN_ARMOR",
+                        "SCHNORR_SIGN_BINARY",
+                        "ENCRYPT_BIN",
+                        "DECRYPT_BIN"
+                    ],
+                    "friendly_name": "UnicornPrincess"
+                }
+            },
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "curve value not a string"
+    },
+    {
+        "decode_error": "curve value is an empty string",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": true,
+            "public_keys": {
+                "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03": {
+                    "curve": "",
+                    "features": [
+                        "SCHNORR_SIGN_ARMOR",
+                        "SCHNORR_SIGN_BINARY",
+                        "ENCRYPT_BIN",
+                        "DECRYPT_BIN"
+                    ],
+                    "friendly_name": "UnicornPrincess"
+                }
+            },
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "curve value empty string"
+    },
+    {
+        "decode_error": "friendly_name value is not a string",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": true,
+            "public_keys": {
+                "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03": {
+                    "curve": "secp256k1",
+                    "features": [
+                        "SCHNORR_SIGN_ARMOR",
+                        "SCHNORR_SIGN_BINARY",
+                        "ENCRYPT_BIN",
+                        "DECRYPT_BIN"
+                    ],
+                    "friendly_name": 123
+                }
+            },
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "friendly_name value not a string"
+    },
+    {
+        "decode_error": "friendly_name value is empty string",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": true,
+            "public_keys": {
+                "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03": {
+                    "curve": "secp256k1",
+                    "features": [
+                        "SCHNORR_SIGN_ARMOR",
+                        "SCHNORR_SIGN_BINARY",
+                        "ENCRYPT_BIN",
+                        "DECRYPT_BIN"
+                    ],
+                    "friendly_name": ""
+                }
+            },
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "friendly_name value is empty string"
+    },
+    {
+        "decode_error": "friendly_name string is longer than 64 chars",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": true,
+            "public_keys": {
+                "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03": {
+                    "curve": "secp256k1",
+                    "features": [
+                        "SCHNORR_SIGN_ARMOR",
+                        "SCHNORR_SIGN_BINARY",
+                        "ENCRYPT_BIN",
+                        "DECRYPT_BIN"
+                    ],
+                    "friendly_name": "reallyreallyreallyreallyreallyreallyreallyreallyreallylongfreindlynamestring"
+                }
+            },
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "friendly_name value too long"
+    },
+    {
+        "decode_error": "features list not included in object",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": true,
+            "public_keys": {
+                "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03": {
+                    "curve": "secp256k1",
+                    "friendly_name": "UnicornPrincess"
+                }
+            },
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "public key fetures missing"
+    },
+    {
+        "decode_error": "features value not an array",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": true,
+            "public_keys": {
+                "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03": {
+                    "curve": "secp256k1",
+                    "features": {},
+                    "friendly_name": "UnicornPrincess"
+                }
+            },
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "public key features not an array"
+    },
+    {
+        "decode_error": "feature string not a string",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": true,
+            "public_keys": {
+                "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03": {
+                    "curve": "secp256k1",
+                    "features": [
+                        "feature1",
+                        123
+                    ],
+                    "friendly_name": "UnicornPrincess"
+                }
+            },
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "public key feature value not a string"
+    },
+    {
+        "decode_error": "feature string an empty string",
+        "input": {
+            "account_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+            "feature_data": {},
+            "features": [],
+            "payee": true,
+            "payer": true,
+            "public_keys": {
+                "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03": {
+                    "curve": "secp256k1",
+                    "features": [
+                        "feature1",
+                        ""
+                    ],
+                    "friendly_name": "UnicornPrincess"
+                }
+            },
+            "wad": {
+                "msat": 654321,
+                "non_btc": null
+            }
+        },
+        "test_name": "public key feature value not a string"
+    }
+]
