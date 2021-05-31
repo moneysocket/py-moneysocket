@@ -9,7 +9,7 @@ VERSION_PATCH = 99 # implementing v1, but still WIP
 VERSION = ".".join(str(v) for v in [VERSION_MAJOR, VERSION_MINOR,
                                     VERSION_PATCH])
 
-class MoneysocketVersion():
+class Version():
     def __init__(self, major, minor, patch):
         assert major <= 255
         assert minor <= 255
@@ -28,8 +28,8 @@ class MoneysocketVersion():
 
     @staticmethod
     def from_dict(version_dict):
-        return MoneysocketVersion(version_dict['major'], version_dict['minor'],
-                                  version_dict['patch'])
+        return Version(version_dict['major'], version_dict['minor'],
+                       version_dict['patch'])
 
     def encode_bytes(self):
         return bytes([self.major, self.minor, self.patch])
@@ -41,8 +41,8 @@ class MoneysocketVersion():
         major = int.from_bytes(encoded_bytes[0:1], byteorder='big')
         minor = int.from_bytes(encoded_bytes[1:2], byteorder='big')
         patch = int.from_bytes(encoded_bytes[2:3], byteorder='big')
-        return MoneysocketVersion(major, minor, patch), None
+        return Version(major, minor, patch), None
 
     @staticmethod
     def this_code_version():
-        return MoneysocketVersion(VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH)
+        return Version(VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH)
