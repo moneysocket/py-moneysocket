@@ -11,6 +11,7 @@ from moneysocket1.encoding.test_bigsize import TestBigSize
 from moneysocket1.encoding.test_namespace import TestNamespace
 from moneysocket1.provider_info.test_wad import TestWad
 from moneysocket1.provider_info.test_provider_info import TestProviderInfo
+from moneysocket1.message.test_message import TestMessage
 
 if __name__ == '__main__':
     unittest.main()
