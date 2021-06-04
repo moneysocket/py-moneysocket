@@ -5,7 +5,7 @@
 import json
 import traceback
 
-from ..version import MoneysocketVersion
+from ..version import Version
 from ..encoding.tlv import Tlv
 from ..encoding.bigsize import BigSize
 from ..encoding.bech32 import Bech32
@@ -48,8 +48,7 @@ class Beacon():
         self.shared_seed = shared_seed if shared_seed else SharedSeed()
         self.locations = locations
         self.unknown_tlvs = unknown_tlvs
-        self.version = (version if version else
-                        MoneysocketVersion.this_code_version())
+        self.version = version if version else Version.this_code_version()
 
     ###########################################################################
 
@@ -99,7 +98,7 @@ class Beacon():
         if version_tlv.t != GENERATOR_VERSION_TLV_TYPE:
             return None, None, None, None, None, "missing generator_version TLV"
 
-        version, err = MoneysocketVersion.from_bytes(version_tlv.v)
+        version, err = Version.from_bytes(version_tlv.v)
         if err:
             return None, None, None, None, None, err
 
@@ -188,7 +187,7 @@ class Beacon():
         # NOTE: this is not very strict and is not informative with errors
         try:
             hrp = beacon_dict['hrp']
-            version = MoneysocketVersion.from_dict(
+            version = Version.from_dict(
                 beacon_dict['generator_version'])
             role_hint = (ROLE_HINTS[beacon_dict['role_hint']]
                          if not beacon_dict['role_hint'] is None else None)

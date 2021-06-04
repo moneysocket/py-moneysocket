@@ -1,0 +1,25 @@
+[
+    {
+        "decoded": {"type": 0,
+                    "subtype": 0,
+                    "language_object": {"timestamp": 1234,
+                                        "version": {"major": 3,
+                                                    "minor": 2,
+                                                    "patch": 1
+                                                   },
+                                        "type":    "REQUEST",
+                                        "subtype": "TRANSPORT_PING",
+                                        "subtype_data": {},
+                                        "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                                        "features": [],
+                                        "features_data": {}
+                                        },
+                    "sender_version": {"major": 3,
+                                       "minor": 2,
+                                       "patch": 1},
+                    "additional_tlvs": []
+                   },
+        "encoded": "abc123",
+        "test_name": ""
+    }
+]
