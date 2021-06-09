@@ -19,38 +19,41 @@ PATH = os.path.dirname(os.path.abspath(__file__))
 ENCODE_DECODE_VECTORS = load_json_file(
     os.path.join(PATH, "../../test_vectors/04-message-encode-decode.json"))
 
+DECODE_ERROR_VECTORS = load_json_file(
+    os.path.join(PATH, "../../test_vectors/04-message-decode-error.json"))
+
 
 
 class TestMessage(unittest.TestCase):
-    def xxx_test_message_encode_decode(self):
+    def test_message_encode_decode(self):
         for v in ENCODE_DECODE_VECTORS:
-            print("running: %s" % v["test_name"])
-            input_bin = bytes.fromhex(v['encoded'])
-            input_dict = v['decoded']
-            want_json = json.dumps(input_dict, sort_keys=True, indent=1)
-
-            got_message, err = Message.decode_tlv(input_bin)
-            print(err)
-            self.assertTrue(err is None)
-
-            got_dict = got_message.to_dict()
-            got_json = json.dumps(got_dict, sort_keys=True, indent=1)
-            self.assertEqual(got_json, want_json)
-
-
-    def xxx_test_message_encode_decode(self):
-        for v in ENCODE_DECODE_VECTORS:
-            print("running: %s" % v["test_name"])
-            input_bin = bytes.fromhex(v['encoded'])
             input_dict = v['decoded']
             m = Message.from_dict(input_dict)
             b = m.encode_bytes()
-            print(b.hex())
+            print("bytes from dict: %s" % b.hex())
 
-            got_message, err = Message.decode_bytes(input_bin)
+
+            print("running: %s" % v["test_name"])
+            input_bin = bytes.fromhex(v['encoded'])
+            decoded_message, err = Message.decode_bytes(input_bin)
             print(err)
             self.assertTrue(err is None)
 
-            got_dict = got_message.to_dict()
-            got_json = json.dumps(got_dict, sort_keys=True, indent=1)
-            self.assertEqual(got_json, want_json)
+
+            want_dict = v['decoded']
+            want_message = Message.from_dict(input_dict)
+
+            decoded_json = json.dumps(decoded_message.to_dict(),
+                                      sort_keys=True, indent=1)
+            want_json = json.dumps(want_message.to_dict(), sort_keys=True,
+                                   indent=1)
+            self.assertEqual(decoded_json, want_json)
+
+            encoded1 = decoded_message.encode_bytes()
+            encoded2 = want_message.encode_bytes()
+            self.assertEqual(encoded1, encoded2)
+            self.assertEqual(encoded1, input_bin)
+
+    def test_message_decode_error(self):
+        for v in DECODE_ERROR_VECTORS:
+            print(v)

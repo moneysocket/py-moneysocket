@@ -12,14 +12,60 @@
                                         "subtype_data": {},
                                         "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
                                         "features": [],
-                                        "features_data": {}
+                                        "feature_data": {}
                                         },
                     "sender_version": {"major": 3,
                                        "minor": 2,
                                        "patch": 1},
                     "additional_tlvs": []
                    },
-        "encoded": "abc123",
-        "test_name": ""
+        "encoded": "00ef00030302010102000002e47b2274696d657374616d70223a20313233342c202276657273696f6e223a207b226d616a6f72223a20332c20226d696e6f72223a20322c20227061746368223a20317d2c202274797065223a202252455155455354222c202273756274797065223a20225452414e53504f52545f50494e47222c2022737562747970655f64617461223a207b7d2c2022726571756573745f75756964223a202261356233323933362d333134332d343835362d626465612d376233646461376161356538222c20226665617475726573223a205b5d2c2022666561747572655f64617461223a207b7d7d",
+        "test_name": "normal request"
+    },
+    {
+        "decoded": {"type": 1,
+                    "subtype": 0,
+                    "language_object": {"timestamp": 1234,
+                                        "version": {"major": 3,
+                                                    "minor": 2,
+                                                    "patch": 1
+                                                   },
+                                        "type":    "NOTIFICATION",
+                                        "subtype": "TRANSPORT_PONG",
+                                        "subtype_data": {},
+                                        "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                                        "features": [],
+                                        "feature_data": {}
+                                        },
+                    "sender_version": {"major": 3,
+                                       "minor": 2,
+                                       "patch": 1},
+                    "additional_tlvs": []
+                   },
+        "encoded": "00f400030302010102010002e97b2274696d657374616d70223a20313233342c202276657273696f6e223a207b226d616a6f72223a20332c20226d696e6f72223a20322c20227061746368223a20317d2c202274797065223a20224e4f54494649434154494f4e222c202273756274797065223a20225452414e53504f52545f504f4e47222c2022737562747970655f64617461223a207b7d2c2022726571756573745f75756964223a202261356233323933362d333134332d343835362d626465612d376233646461376161356538222c20226665617475726573223a205b5d2c2022666561747572655f64617461223a207b7d7d",
+        "test_name": "normal notification"
+    },
+    {
+        "decoded": {"type": 1,
+                    "subtype": 0,
+                    "language_object": {"timestamp": 1234,
+                                        "version": {"major": 3,
+                                                    "minor": 2,
+                                                    "patch": 1
+                                                   },
+                                        "type":    "NOTIFICATION",
+                                        "subtype": "TRANSPORT_PONG",
+                                        "subtype_data": {},
+                                        "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                                        "features": ["abc", "def"],
+                                        "feature_data": {"abc": 123}
+                                        },
+                    "sender_version": {"major": 3,
+                                       "minor": 2,
+                                       "patch": 1},
+                    "additional_tlvs": []
+                   },
+        "encoded": "00fd010c00030302010102010002fd00ff7b2274696d657374616d70223a20313233342c202276657273696f6e223a207b226d616a6f72223a20332c20226d696e6f72223a20322c20227061746368223a20317d2c202274797065223a20224e4f54494649434154494f4e222c202273756274797065223a20225452414e53504f52545f504f4e47222c2022737562747970655f64617461223a207b7d2c2022726571756573745f75756964223a202261356233323933362d333134332d343835362d626465612d376233646461376161356538222c20226665617475726573223a205b22616263222c2022646566225d2c2022666561747572655f64617461223a207b22616263223a203132337d7d",
+        "test_name": "notification with feature data"
     }
 ]

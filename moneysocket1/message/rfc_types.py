@@ -29,6 +29,37 @@ RFC_MESSAGE_TYPE_NAMES = {
 }
 
 
+def check_rfc_types(type_number, type_name, subtype_number, subtype_name):
+    if type_number not in RFC_MESSAGE_TYPE_NUMBERS:
+        if type_name in RFC_MESSAGE_TYPE_NAMES:
+            return "rfc type number without matching name"
+    if type_name not in RFC_MESSAGE_TYPE_NAMES:
+        if type_number in RFC_MESSAGE_TYPE_NUMBERS:
+            return "rfc type name without matching number"
+
+    if type_name == "REQUEST":
+        if subtype_number not in RFC_REQUEST_SUBTYPE_NUMBERS:
+            if subtype_name in RFC_REQUEST_SUBTYPE_NAMES:
+                return "rfc request subtype number without matching name"
+        if subtype_name not in RFC_REQUEST_SUBTYPE_NAMES:
+            if subtype_number in RFC_REQUEST_SUBTYPE_NUMBERS:
+                return "rfc request subtype name without matching number"
+    elif type_name == "NOTIFICATION":
+        if subtype_number not in RFC_NOTIFICATION_SUBTYPE_NUMBERS:
+            if subtype_name in RFC_NOTIFICATION_SUBTYPE_NAMES:
+                return "rfc request subtype number without matching name"
+        if subtype_name not in RFC_NOTIFICATION_SUBTYPE_NAMES:
+            if subtype_number in RFC_NOTIFICATION_SUBTYPE_NUMBERS:
+                return "rfc notification subtype name without matching number"
+    return None
+
+def is_rfc_type(type_name, subtype_name):
+    if type_name in RFC_MESSAGE_TYPE_NAMES:
+        if (subtype_name in
+            RFC_MESSAGE_TYPE_NUMBERS[type_names]['subtypes_by_name']):
+            return True
+    return False
+
 
 #def classify_number_name(type_number, type_name, subtype_number, subtype_name):
 #    if type_number not in RFC_MESSAGE_TYPE_NAMES.keys():

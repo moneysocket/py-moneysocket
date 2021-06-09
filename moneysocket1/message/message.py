@@ -3,6 +3,8 @@
 # file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
 import json
+import uuid
+import time
 
 from ..version import Version
 from ..encoding.tlv import Tlv
@@ -11,6 +13,7 @@ from ..encoding.bigsize import BigSize
 
 from .rfc_types import RFC_MESSAGE_TYPE_NAMES
 from .rfc_types import RFC_MESSAGE_TYPE_NUMBERS
+from .rfc_types import check_rfc_types
 
 MESSAGE_TLV_TYPE = 0
 SENDER_VERSION_TLV_TYPE = 0
@@ -18,6 +21,8 @@ MESSAGE_TYPE_TLV_TYPE = 1
 LANGUAGE_OBJECT_TLV_TYPE = 2
 
 ONE_HOUR_IN_SECONDS = 60 * 60
+
+
 
 
 class MessageDirectory():
@@ -52,21 +57,25 @@ class MessageDirectory():
                              'type_no':       msg_class.TYPE_NO,
                              'subtype_no':    msg_class.SUBTYPE_NO,
                              'type_name':     msg_class.TYPE_NAME,
-                             'subtype_name':  msg_class.SUBTYPE_NAME,
-                             'validate_func': msg_class.validate_func}
+                             'subtype_name':  msg_class.SUBTYPE_NAME}
 
-    def has_entry(self, type_no, subtype_no):
-        i = MessageDirectory.index_no(type_no, subtype_no)
+    def has_entry(self, type_name, subtype_name):
+        i, err = self.index_name(type_name, subtype_name)
+        if err:
+            return False
         return i in self.directory
+
+    def lookup_class(self, type_name, subtype_name):
+        i, err = self.index_name(type_name, subtype_name)
+        return self.directory[i]['class']
+
+
+MESSAGE_DIRECTORY = MessageDirectory()
 
 
 class Message():
-    MESSAGE_TYPES = {}
-
-    def __init__(self, message_type, message_subtype, language_object,
-                 additional_tlvs=[], sender_version=None):
-        self.type = message_type
-        self.subtype = message_subtype
+    def __init__(self, language_object, additional_tlvs=[],
+                 sender_version=None):
         self.sender_version = (sender_version if sender_version else
                                Version.this_code_version())
         self.additional_tlvs = additional_tlvs
@@ -74,8 +83,8 @@ class Message():
 
 
     def to_dict(self):
-        return {'type':            self.message_type,
-                'subtype':         self.message_subtype,
+        return {'type':            self.TYPE_NO,
+                'subtype':         self.SUBTYPE_NO,
                 'language_object': self.language_object,
                 'sender_version':  self.sender_version.to_dict(),
                 'additional_tlvs': [tlv.to_dict() for tlv in
@@ -86,32 +95,91 @@ class Message():
         return json.dumps(self.to_dict(), sort_keys=True)
 
 
+
     @staticmethod
     def from_dict(message_dict):
+        # assume dictionary is already validated
         message_type = message_dict['type']
         message_subtype = message_dict['subtype']
         sender_version = Version.from_dict(message_dict['sender_version'])
         language_object = message_dict['language_object']
         additional_tlvs = [Tlv.from_dict(d) for d in
                            message_dict['additional_tlvs']]
-        return Message(message_type, message_subtype, language_object,
-                       additional_tlvs=additional_tlvs,
-                       sender_version=sender_version)
+        type_name = message_dict['language_object']['type']
+        subtype_name = message_dict['language_object']['subtype']
+        c = MESSAGE_DIRECTORY.lookup_class(type_name, subtype_name)
+        return c(language_object, additional_tlvs=additional_tlvs,
+                 sender_version=sender_version)
 
 
     @staticmethod
+    def check_uuidv4(uuid_str):
+        try:
+            u = uuid.UUID(uuid_str)
+            if u.version != 4:
+                return "uuid is not uuid version 4"
+        except Exception as e:
+            return "invalid uuid"
+        return None
+
+
+    @staticmethod
+    def check_language_object_for_subtype(language_object):
+        if "subtype_data" not in language_object:
+            return "no subtype data included"
+        if type(language_object['subtype_data']) != dict:
+            return "subtype_data not of object type"
+        if not MESSAGE_DIRECTORY.has_entry(language_object['type'],
+                                           language_object['subtype']):
+            return "unknown message subtype parser"
+        c = MESSAGE_DIRECTORY.lookup_class(language_object['type'],
+                                           language_object['subtype'])
+        return c.validate_subtype_data(language_object)
+
+
+    @staticmethod
+    def check_language_object_for_type(language_object):
+        t = language_object["type"]
+        if t == "REQUEST":
+            if "request_uuid" not in language_object:
+                return "no request_uuid for REQUEST"
+            if type(language_object['request_uuid']) != str:
+                return "request_uuid is not a string"
+
+            err = Message.check_uuidv4(language_object['request_uuid'])
+            if err:
+                return None, err
+        elif t == "NOTIFICATION":
+            if "request_uuid" not in language_object:
+                return "no request_uuid for NOTIFICATION"
+            rrid = language_object['request_uuid']
+            if rrid is not None:
+                if type(rrid) != str:
+                    return "request_uuid is not a string"
+                err = Message.check_uuidv4(rrid)
+                if err:
+                    return None, err
+            # null rrid is allowed, but subtype might not allow it
+        else:
+            return None, "unknown message type"
+
+        return None
+
+    @staticmethod
     def decode_bytes(message_bytes):
-        t, tlv_stream, err = Tlv.pop(message_bytes)
+        msg_tlv, remainder, err = Tlv.pop(message_bytes)
         if err:
             return None, err
-        if t != MESSAGE_TLV_TYPE:
+        if len(remainder) > 0:
+            return None, "extra bytes after message TLV"
+        if msg_tlv.t != MESSAGE_TLV_TYPE:
             return None, "unknown TLV"
-        if not Namespace.tlvs_are_valid(tlv_stream):
+        if not Namespace.tlvs_are_valid(msg_tlv.v):
             return None, "invalid TLVs in message"
-        if len(tlv_stream) == 0:
+        if len(msg_tlv.v) == 0:
             return None, "no TLVs in message"
         # Version TLV
-        version_tlv, tlv_stream, _ = Tlv.pop(tlv_stream)
+        version_tlv, tlv_stream, _ = Tlv.pop(msg_tlv.v)
         # already validated TLV validity
         if version_tlv.t != SENDER_VERSION_TLV_TYPE:
             return None, "missing sender_version TLV"
@@ -129,19 +197,12 @@ class Message():
         if message_type_tlv.t != MESSAGE_TYPE_TLV_TYPE:
             return None, "malformed message_type TLV"
 
-        message_type, remainder, err = Namespace.pop_u8(message_type.v)
+        message_type, remainder, err = Namespace.pop_u8(message_type_tlv.v)
         if err:
             return None, "malformed message_type type value"
-        message_type, remainder, err = Namespace.pop_u8(message_type.v)
-        if err:
-            return None, "malformed message_type subtype value"
         message_subtype, remainder, err = BigSize.pop(remainder)
         if len(remainder) != 0:
             return None, "extra bytes in message_type TLV"
-        #if message_type not in RFC_MESSAGE_TYPE_NAMES.keys():
-        #    return None, "unknown message type"
-        #if message_subtype not in self.MESSAGE_TYPES[message_type]:
-        #    return None, "unknown message subtype"
 
         if len(tlv_stream) == 0:
             return None, "missing language_object TLV"
@@ -169,7 +230,7 @@ class Message():
             return None, "version not an object"
         if "major" not in language_object['version']:
             return None, "version missing major value"
-        if len(language_object['version']['major']) != int:
+        if type(language_object['version']['major']) != int:
             return None, "version major not integer"
         if language_object['version']['major'] < 0:
             return None, "version major negative"
@@ -177,7 +238,7 @@ class Message():
             return None, "version major greater than 255"
         if "minor" not in language_object['version']:
             return None, "version missing minor value"
-        if len(language_object['version']['minor']) != int:
+        if type(language_object['version']['minor']) != int:
             return None, "version minor not integer"
         if language_object['version']['minor'] < 0:
             return None, "version minor negative"
@@ -185,17 +246,18 @@ class Message():
             return None, "version minor greater than 255"
         if "patch" not in language_object['version']:
             return None, "version missing patch value"
-        if len(language_object['version']['patch']) != int:
+        if type(language_object['version']['patch']) != int:
             return None, "version patch not integer"
         if language_object['version']['patch'] < 0:
             return None, "version patch negative"
         if language_object['version']['patch'] > 255:
             return None, "version patch greater than 255"
-        if language_object['version']['major'] != version.major:
+
+        if language_object['version']['major'] != sender_version.major:
             return None, "language_object major version doesn't match TLV"
-        if language_object['version']['minor'] != version.minor:
+        if language_object['version']['minor'] != sender_version.minor:
             return None, "language_object minor version doesn't match TLV"
-        if language_object['version']['patch'] != version.patch:
+        if language_object['version']['patch'] != sender_version.patch:
             return None, "language_object patch version doesn't match TLV"
 
         if 'features' not in language_object:
@@ -223,33 +285,42 @@ class Message():
             return None, "language_object missing subtype"
         if type(language_object["subtype"]) != str:
             return None, "language_object subtype is not a string"
-        if language_object["subtype"] != "":
+        if language_object["subtype"] == "":
             return None, "language_object subtype is an empty string"
 
-        if language_object['type'] not in MESSAGE_TYPE_NUMBERS.keys():
+        if language_object['type'] not in RFC_MESSAGE_TYPE_NUMBERS.keys():
             return None, "language_object missing type"
 
-        # does number match name?
-        # does name match number?
-        # does tlv number match language object?
-        # does number and name fit rfc types?
-        # is number and name registered with a parser?
-        # does registered parser succeed without error?
 
+        err = Message.check_language_object_for_type(language_object)
+        if err:
+            return None, err
 
+        err = Message.check_language_object_for_subtype(language_object)
+        if err:
+            return None, err
+
+        err = check_rfc_types(message_type, language_object["type"],
+                              message_subtype, language_object['subtype'])
+        if err:
+            return None, err
 
         additional_tlvs = list(Namespace.iter_tlvs(tlv_stream))
-        return Message(message_type, message_subtype, language_object,
-                       additional_dlvs=additional_tlvs,
-                       sender_version=sender_version)
+
+        type_name = language_object['type']
+        subtype_name = language_object['subtype']
+        c = MESSAGE_DIRECTORY.lookup_class(type_name, subtype_name)
+        m = c(language_object, additional_tlvs=additional_tlvs,
+              sender_version=sender_version)
+        return m, None
 
 
     def encode_bytes(self):
         sender_version_tlv = Tlv(SENDER_VERSION_TLV_TYPE,
                                  self.sender_version.encode_bytes()).encode()
 
-        type_bin = Namespace.encode_u8(self.type)
-        subtype_bin = BigSize.encode(self.subtype)
+        type_bin = Namespace.encode_u8(self.TYPE_NO)
+        subtype_bin = BigSize.encode(self.SUBTYPE_NO)
         message_type_tlv = Tlv(MESSAGE_TYPE_TLV_TYPE,
                                type_bin + subtype_bin).encode()
 
@@ -262,3 +333,55 @@ class Message():
         return Tlv(MESSAGE_TLV_TYPE,
                    sender_version_tlv + message_type_tlv +
                    language_object_tlv + additional_tlvs).encode()
+
+
+class MessageSubtype(Message):
+    def __init__(self, language_object, additional_tlvs=[],
+                 sender_version=None):
+        super().__init__(language_object, additional_tlvs=additional_tlvs,
+                         sender_version=sender_version)
+
+    @staticmethod
+    def validate_subtype_data(language_object):
+        raise NotImplementedError("implement in subclass")
+
+
+
+class TransportPing(MessageSubtype):
+    TYPE_NO = 0x0
+    TYPE_NAME = "REQUEST"
+    SUBTYPE_NO = 0x0
+    SUBTYPE_NAME = "TRANSPORT_PING"
+    def __init__(self, language_object, additional_tlvs=[],
+                 sender_version=None):
+        super().__init__(language_object, additional_tlvs=additional_tlvs,
+                         sender_version=sender_version)
+
+    @staticmethod
+    def validate_subtype_data(language_object):
+        return None
+
+
+MESSAGE_DIRECTORY.register(TransportPing)
+
+class TransportPong(MessageSubtype):
+    TYPE_NO = 0x1
+    TYPE_NAME = "NOTIFICATION"
+    SUBTYPE_NO = 0x0
+    SUBTYPE_NAME = "TRANSPORT_PONG"
+    def __init__(self, language_object, additional_tlvs=[],
+                 sender_version=None):
+        super().__init__(language_object, additional_tlvs=additional_tlvs,
+                         sender_version=sender_version)
+
+    @staticmethod
+    def validate_subtype_data(language_object):
+        if type(language_object['request_uuid']) is not str:
+            return "non-string request uuid for TRANSPORT_PONG"
+        err = TransportPong.check_uuidv4(language_object['request_uuid'])
+        if err:
+            return err
+        return None
+
+
+MESSAGE_DIRECTORY.register(TransportPong)
