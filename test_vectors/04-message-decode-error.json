@@ -1,8 +1,634 @@
 [
     {
-        "decode_error": "invalid messsageTLV",
-        "input_chunks": ["00ef00030302010102000002e47b2274696d657374616d70223a20313233342c202276657273696f6e223a207b226d616a6f72223a20332c20226d696e6f72223a20322c20227061746368223a20317d2c202274797065223a202252455155455354222c202273756274797065223a20225452414e53504f52545f50494e47222c2022737562747970655f64617461223a207b7d2c2022726571756573745f75756964223a202261356233323933362d333134332d343835362d626465612d376233646461376161356538222c20226665617475726573223a205b5d2c2022666561747572655f64617461223a207b7d7d"
-            ],
-        "test_name": "beacon one byte missing"
+        "decode_error": "could not get type: underrun while peeking a uint8",
+        "input_chunks": [""],
+        "test_name": "empty buffer"
+    },
+    {
+        "decode_error": "could not get length: underrun while peeking a uint8",
+        "input_chunks": ["00"],
+        "test_name": "single byte"
+    },
+    {
+        "decode_error": "value truncated",
+        "input_chunks": ["00030003"],
+        "test_name": "one byte short"
+    },
+    {
+        "decode_error": "extra bytes after message TLV",
+        "input_chunks": ["000300030405"],
+        "test_name": "one byte too long"
+    },
+    {
+        "decode_error": "unknown TLV",
+        "input_chunks": ["0103000304"],
+        "test_name": "wrong TLV Type"
+    },
+    {
+        "decode_error": "invalid TLVs in message",
+        "input_chunks": ["0002ffff"],
+        "test_name": "non tlv stream in message TLV"
+    },
+    {
+        "decode_error": "no TLVs in message",
+        "input_chunks": ["0000"],
+        "test_name": "no TLVs in message"
+    },
+    {
+        "decode_error": "missing sender_version TLV",
+        "input_chunks": ["0005",
+                         "0103",
+                         "030201"],
+        "test_name": "first TLV not sender_version"
+    },
+    {
+        "decode_error": "malformed sender_version TLV: unable to decode version from bytes",
+        "input_chunks": ["0004",
+                         "0002",
+                         "0302"],
+        "test_name": "malformed sender_version tlv"
+    },
+    {
+        "decode_error": "missing message_type TLV",
+        "input_chunks": ["0005",
+                         "0003",
+                         "030201"],
+        "test_name": "nothing after sender_version"
+    },
+    {
+        "decode_error": "no message_type TLV after sender_version",
+        "input_chunks": ["0007",
+                         "0003",
+                         "030201",
+                         "0400"],
+        "test_name": "different TLV after sender_version"
+    },
+    {
+        "decode_error": "malformed message_type type value: underrun while popping a u8",
+        "input_chunks": ["0007",
+                         "0003",
+                         "030201",
+                         "0100"],
+        "test_name": "malformed message_type TLV (1)"
+    },
+    {
+        "decode_error": "malformed message_type subtype value: underrun while peeking a uint8",
+        "input_chunks": ["0008",
+                         "0003",
+                         "030201",
+                         "0101",
+                         "00"],
+        "test_name": "malformed message_type TLV (2)"
+    },
+    {
+        "decode_error": "extra bytes in message_type TLV",
+        "input_chunks": ["000a",
+                         "0003",
+                         "030201",
+                         "0103",
+                         "000000"],
+        "test_name": "malformed message_type TLV (3)"
+    },
+    {
+        "decode_error": "missing language_object TLV",
+        "input_chunks": ["0009",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000"],
+        "test_name": "missing language_object"
+    },
+    {
+        "decode_error": "no language_object TLV after message_type",
+        "input_chunks": ["000b",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0300"],
+        "test_name": "different TLV instead of language_object"
+    },
+    {
+        "decode_error": "could not decode json object",
+        "input_chunks": ["000b",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0200"],
+        "test_name": "language_object JSON couldn't be decoded"
+    },
+    {
+        "decode_error": "timestamp not in language_object",
+        "input_chunks": ["000d",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0202",
+                         {}
+                        ],
+        "test_name": "empty language_object"
+    },
+    {
+        "decode_error": "timestamp not an integer or float",
+        "input_chunks": ["0020",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0215",
+                         {"timestamp": "asdf"}
+                        ],
+        "test_name": "timestamp not a number"
+    },
+    {
+        "decode_error": "timestamp is not a positive value",
+        "input_chunks": ["001e",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0213",
+                         {"timestamp": -100}
+                        ],
+        "test_name": "negative timestamp"
+    },
+    {
+        "decode_error": "timestamp in the future",
+        "input_chunks": ["002b",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0220",
+                         {"timestamp": 3246722008.844661}
+                        ],
+        "test_name": "(distant) future timestamp"
+    },
+    {
+        "decode_error": "version not in language_object",
+        "input_chunks": ["002b",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0220",
+                         {"timestamp": 1623361001.983355}
+                        ],
+        "test_name": "version missing"
+    },
+    {
+        "decode_error": "version not an object",
+        "input_chunks": ["003c",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0231",
+                         {"timestamp": 1623361001.983355,
+                          "version": null}
+                        ],
+        "test_name": "version not correct type"
+    },
+    {
+        "decode_error": "version missing major value",
+        "input_chunks": ["003a",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "022f",
+                         {"timestamp": 1623361001.983355,
+                          "version": {}}
+                        ],
+        "test_name": "version major value missing"
+    },
+    {
+        "decode_error": "version major not integer",
+        "input_chunks": ["0047",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "023c",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": null}}
+                        ],
+        "test_name": "version major wrong type"
+    },
+    {
+        "decode_error": "version major negative",
+        "input_chunks": ["0045",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "023a",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": -1}}
+                        ],
+        "test_name": "version major negative integer"
+    },
+    {
+        "decode_error": "version major greater than 255",
+        "input_chunks": ["0046",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "023b",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 400}}
+                        ],
+        "test_name": "version major larger than max u8"
+    },
+    {
+        "decode_error": "version missing minor value",
+        "input_chunks": ["0044",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0239",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 1}}
+                        ],
+        "test_name": "version minor value not included"
+    },
+    {
+        "decode_error": "version missing minor value",
+        "input_chunks": ["0044",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0239",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 1}}
+                        ],
+        "test_name": "version minor value not included"
+    },
+    {
+        "decode_error": "version minor not integer",
+        "input_chunks": ["0052",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0247",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 1,
+                                      "minor": "2"}}
+                        ],
+        "test_name": "version minor value wrong type"
+    },
+    {
+        "decode_error": "version minor negative",
+        "input_chunks": ["0051",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0246",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 1,
+                                      "minor": -2}}
+                        ],
+        "test_name": "version minor negative integer"
+    },
+    {
+        "decode_error": "version minor greater than 255",
+        "input_chunks": ["0052",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0247",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 1,
+                                      "minor": 555}}
+                        ],
+        "test_name": "version minor greater than max u8"
+    },
+    {
+        "decode_error": "version missing patch value",
+        "input_chunks": ["0050",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0245",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 1,
+                                      "minor": 2}}
+                        ],
+        "test_name": "version patch value not included"
+    },
+    {
+        "decode_error": "version patch not integer",
+        "input_chunks": ["005d",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0252",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 1,
+                                      "minor": 2,
+                                      "patch": []}}
+                        ],
+        "test_name": "version patch value wrong type"
+    },
+    {
+        "decode_error": "version patch negative",
+        "input_chunks": ["005d",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0252",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 1,
+                                      "minor": 2,
+                                      "patch": -3}}
+                        ],
+        "test_name": "version patch integer less than zero"
+    },
+    {
+        "decode_error": "version patch greater than 255",
+        "input_chunks": ["005e",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0253",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 1,
+                                      "minor": 2,
+                                      "patch": 777}}
+                        ],
+        "test_name": "version patch greater than max u8"
+    },
+    {
+        "decode_error": "language_object major version doesn't match TLV",
+        "input_chunks": ["005c",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0251",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 4,
+                                      "minor": 2,
+                                      "patch": 1}}
+                        ],
+        "test_name": "inconsistent major version"
+    },
+    {
+        "decode_error": "language_object minor version doesn't match TLV",
+        "input_chunks": ["005c",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0251",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 3,
+                                      "minor": 3,
+                                      "patch": 1}}
+                        ],
+        "test_name": "inconsistent minor version"
+    },
+    {
+        "decode_error": "language_object patch version doesn't match TLV",
+        "input_chunks": ["005c",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0251",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 3,
+                                      "minor": 2,
+                                      "patch": 2}}
+                        ],
+        "test_name": "inconsistent patch version"
+    },
+    {
+        "decode_error": "language_object features value not included",
+        "input_chunks": ["005c",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0251",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 3,
+                                      "minor": 2,
+                                      "patch": 1}}
+                        ],
+        "test_name": "features list not included"
+    },
+    {
+        "decode_error": "language_object features value not a list",
+        "input_chunks": ["006c",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0261",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 3,
+                                      "minor": 2,
+                                      "patch": 1},
+                          "features": {}}
+                        ],
+        "test_name": "features list wrong type"
+    },
+    {
+        "decode_error": "language_object feature_data value not included",
+        "input_chunks": ["0079",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "026e",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 3,
+                                      "minor": 2,
+                                      "patch": 1},
+                          "features": ["feature_one"]}
+                        ],
+        "test_name": "feature_data object not included"
+    },
+    {
+        "decode_error": "language_object feature_data value not an object",
+        "input_chunks": ["008d",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0282",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 3,
+                                      "minor": 2,
+                                      "patch": 1},
+                          "features": ["feature_one"],
+                          "feature_data": []
+                         }
+                        ],
+        "test_name": "feature_data object not included"
+    },
+    {
+        "decode_error": "language_object feature_data for unknown feature",
+        "input_chunks": ["009f",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0294",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 3,
+                                      "minor": 2,
+                                      "patch": 1},
+                          "features": ["feature_one"],
+                          "feature_data": {"feature_two": 123}
+                         }
+                        ],
+        "test_name": "feature_data for undeclared feature"
+    },
+    {
+        "decode_error": "language_object feature_data value is null",
+        "input_chunks": ["00a0",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0295",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 3,
+                                      "minor": 2,
+                                      "patch": 1},
+                          "features": ["feature_one"],
+                          "feature_data": {"feature_one": null}
+                         }
+                        ],
+        "test_name": "feature_data is null"
+    },
+    {
+        "decode_error": "language_object missing type",
+        "input_chunks": ["00a0",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "0295",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 3,
+                                      "minor": 2,
+                                      "patch": 1},
+                          "features": ["feature_one"],
+                          "feature_data": {"feature_one": 1234}
+                         }
+                        ],
+        "test_name": "type value not included"
+    },
+    {
+        "decode_error": "language_object type is not a string",
+        "input_chunks": ["00ad",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "02a2",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 3,
+                                      "minor": 2,
+                                      "patch": 1},
+                          "features": ["feature_one"],
+                          "feature_data": {"feature_one": 1234},
+                          "type": 123
+                         }
+                        ],
+        "test_name": "type value is wrong type"
+    },
+    {
+        "decode_error": "language_object type is an empty string",
+        "input_chunks": ["00ac",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "02a1",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 3,
+                                      "minor": 2,
+                                      "patch": 1},
+                          "features": ["feature_one"],
+                          "feature_data": {"feature_one": 1234},
+                          "type": ""
+                         }
+                        ],
+        "test_name": "type value is empty string"
+    },
+    {
+        "decode_error": "language_object missing subtype",
+        "input_chunks": ["00b3",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "02a8",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 3,
+                                      "minor": 2,
+                                      "patch": 1},
+                          "features": ["feature_one"],
+                          "feature_data": {"feature_one": 1234},
+                          "type": "REQUEST"
+                         }
+                        ],
+        "test_name": "language_object missing subtype"
+    },
+    {
+        "decode_error": "language_object subtype is not a string",
+        "input_chunks": ["00c4",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "02b9",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 3,
+                                      "minor": 2,
+                                      "patch": 1},
+                          "features": ["feature_one"],
+                          "feature_data": {"feature_one": 1234},
+                          "type": "REQUEST",
+                          "subtype": null
+                         }
+                        ],
+        "test_name": "language_object subtype not a string"
+    },
+    {
+        "decode_error": "language_object subtype is an empty string",
+        "input_chunks": ["00c2",
+                         "0003",
+                         "030201",
+                         "0102",
+                         "0000",
+                         "02b7",
+                         {"timestamp": 1623361001.983355,
+                          "version": {"major": 3,
+                                      "minor": 2,
+                                      "patch": 1},
+                          "features": ["feature_one"],
+                          "feature_data": {"feature_one": 1234},
+                          "type": "REQUEST",
+                          "subtype": ""
+                         }
+                        ],
+        "test_name": "language_object subtype is an empty string"
     }
 ]

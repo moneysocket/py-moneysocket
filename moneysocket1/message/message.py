@@ -169,6 +169,7 @@ class Message():
     def decode_bytes(message_bytes):
         msg_tlv, remainder, err = Tlv.pop(message_bytes)
         if err:
+            print("!!!!!")
             return None, err
         if len(remainder) > 0:
             return None, "extra bytes after message TLV"
@@ -186,7 +187,7 @@ class Message():
 
         sender_version, err = Version.from_bytes(version_tlv.v)
         if err:
-            return None, err
+            return None, "malformed sender_version TLV: %s" % err
 
         if len(tlv_stream) == 0:
             return None, "missing message_type TLV"
@@ -195,12 +196,14 @@ class Message():
         message_type_tlv, tlv_stream, _ = Tlv.pop(tlv_stream)
         # already validated TLV validity
         if message_type_tlv.t != MESSAGE_TYPE_TLV_TYPE:
-            return None, "malformed message_type TLV"
+            return None, "no message_type TLV after sender_version"
 
         message_type, remainder, err = Namespace.pop_u8(message_type_tlv.v)
         if err:
-            return None, "malformed message_type type value"
+            return None, "malformed message_type type value: %s" % err
         message_subtype, remainder, err = BigSize.pop(remainder)
+        if err:
+            return None, "malformed message_type subtype value: %s" % err
         if len(remainder) != 0:
             return None, "extra bytes in message_type TLV"
 
@@ -210,14 +213,15 @@ class Message():
         language_object_tlv, tlv_stream, _ = Tlv.pop(tlv_stream)
         # already validated TLV validity
         if language_object_tlv.t != LANGUAGE_OBJECT_TLV_TYPE:
-            return None, "malformed language_object TLV"
+            return None, "no language_object TLV after message_type"
         try:
             language_object = json.loads(language_object_tlv.v.decode("utf8"))
-        except:
+        except Exception as e:
+            print(e)
             return None, "could not decode json object"
 
         if "timestamp" not in language_object:
-            return None, "timestamp not in json object"
+            return None, "timestamp not in language_object"
         if type(language_object["timestamp"]) not in {int, float}:
             return None, "timestamp not an integer or float"
         if language_object["timestamp"] < 0:
@@ -225,7 +229,7 @@ class Message():
         if language_object["timestamp"] > (time.time() + ONE_HOUR_IN_SECONDS):
             return None, "timestamp in the future"
         if "version" not in language_object:
-            return None, "version not in json object"
+            return None, "version not in language_object"
         if type(language_object["version"]) is not dict:
             return None, "version not an object"
         if "major" not in language_object['version']:
@@ -263,13 +267,15 @@ class Message():
         if 'features' not in language_object:
             return None, "language_object features value not included"
         if type(language_object['features']) != list:
-            return None, "language_object features value must be a list"
+            return None, "language_object features value not a list"
         for f in language_object['features']:
             if type(f) != str:
                 return None, "language_object features list entry not a string"
         features = language_object['features']
+        if 'feature_data' not in language_object:
+            return None, "language_object feature_data value not included"
         if type(language_object['feature_data']) != dict:
-            return None, "language_object feature_data value must be an object"
+            return None, "language_object feature_data value not an object"
         for key, value in language_object['feature_data'].items():
             if key not in set(features):
                 return None, "language_object feature_data for unknown feature"
@@ -280,6 +286,8 @@ class Message():
             return None, "language_object missing type"
         if type(language_object["type"]) != str:
             return None, "language_object type is not a string"
+        if language_object["type"] == "":
+            return None, "language_object type is an empty string"
 
         if "subtype" not in language_object:
             return None, "language_object missing subtype"
@@ -287,9 +295,6 @@ class Message():
             return None, "language_object subtype is not a string"
         if language_object["subtype"] == "":
             return None, "language_object subtype is an empty string"
-
-        if language_object['type'] not in RFC_MESSAGE_TYPE_NUMBERS.keys():
-            return None, "language_object missing type"
 
 
         err = Message.check_language_object_for_type(language_object)
@@ -306,6 +311,10 @@ class Message():
             return None, err
 
         additional_tlvs = list(Namespace.iter_tlvs(tlv_stream))
+        for t in additional_tlvs:
+            if t in {SENDER_VERSION_TLV_TYPE, MESSAGE_TYPE_TLV_TYPE,
+                     LANGUAGE_OBJECT_TLV_TYPE}:
+                return None, "aditional tlvs duplicates of defined values"
 
         type_name = language_object['type']
         subtype_name = language_object['subtype']

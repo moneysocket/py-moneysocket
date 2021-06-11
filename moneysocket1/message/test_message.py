@@ -25,7 +25,7 @@ DECODE_ERROR_VECTORS = load_json_file(
 
 
 class TestMessage(unittest.TestCase):
-    def test_message_encode_decode(self):
+    def xxx_test_message_encode_decode(self):
         for v in ENCODE_DECODE_VECTORS:
             input_dict = v['decoded']
             m = Message.from_dict(input_dict)
@@ -56,4 +56,19 @@ class TestMessage(unittest.TestCase):
 
     def test_message_decode_error(self):
         for v in DECODE_ERROR_VECTORS:
-            print(v)
+            print("running: %s" % v["test_name"])
+            b = b''
+            for chunk in v['input_chunks']:
+                if type(chunk) == str:
+                    b += bytes.fromhex(chunk)
+                elif type(chunk) == dict:
+                    print("chunk: %s" % chunk)
+                    d = json.dumps(chunk).encode("utf8")
+                    print("encoded: %s" % d.hex())
+                    print("encodesize: %x" % len(d))
+                    b += d
+                    print("tlv size: %x" % (len(b) - 2))
+            print("decoding: %s" % b.hex())
+            m, err = Message.decode_bytes(b)
+            self.assertEqual(m, None)
+            self.assertEqual(err, v['decode_error'])
