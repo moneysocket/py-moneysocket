@@ -116,7 +116,6 @@ class Message():
     def decode_bytes(message_bytes):
         msg_tlv, remainder, err = Tlv.pop(message_bytes)
         if err:
-            print("!!!!!")
             return None, err
         if len(remainder) > 0:
             return None, "extra bytes after message TLV"

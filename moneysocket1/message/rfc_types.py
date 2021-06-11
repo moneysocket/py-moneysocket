@@ -60,23 +60,3 @@ def is_rfc_type(type_name, subtype_name):
             return True
     return False
 
-
-#def classify_number_name(type_number, type_name, subtype_number, subtype_name):
-#    if type_number not in RFC_MESSAGE_TYPE_NAMES.keys():
-#        return "UNKNOWN"
-#    if RFC_MESSAGE_TYPE_NAMES[type_number]['name'] != type_name:
-#
-#def is_rfc_type(type_number, type_name, subtype_number, subtype_name):
-#    pass
-
-#print(RFC_REQUEST_SUBTYPE_NUMBERS)
-#print(RFC_REQUEST_SUBTYPE_NAMES)
-#print(RFC_NOTIFICATION_SUBTYPE_NUMBERS)
-#print(RFC_NOTIFICATION_SUBTYPE_NAMES)
-
-
-#print(RFC_MESSAGE_TYPE_NAMES)
-#print(RFC_MESSAGE_TYPE_NUMBERS)
-
-
-

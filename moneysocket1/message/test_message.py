@@ -7,6 +7,7 @@ import unittest
 import json
 
 from .message import Message
+from ..encoding.bigsize import BigSize
 
 def load_json_file(path):
     f = open(path, "r")
@@ -62,13 +63,20 @@ class TestMessage(unittest.TestCase):
                 if type(chunk) == str:
                     b += bytes.fromhex(chunk)
                 elif type(chunk) == dict:
-                    print("chunk: %s" % chunk)
+                    #print("chunk: %s" % chunk)
                     d = json.dumps(chunk).encode("utf8")
-                    print("encoded: %s" % d.hex())
-                    print("encodesize: %x" % len(d))
+                    #print("encoded: %s" % d.hex())
                     b += d
-                    print("tlv size: %x" % (len(b) - 2))
-            print("decoding: %s" % b.hex())
+                    #sub = len(BigSize.encode(len(d)))
+                    #print(sub)
+                    #tbs = "00" + BigSize.encode(len(b) - 1 - sub).hex()
+                    #print("tlv big size:    %s" % tbs)
+                    #ebs = "02" + BigSize.encode(len(d)).hex()
+                    #print("encode big size: %s" % ebs)
+            #print("decoding: %s" % b.hex())
             m, err = Message.decode_bytes(b)
             self.assertEqual(m, None)
+            #if err != v['decode_error']:
+            #    print("%s != %s" % (err, v['decode_error']))
+            #    break
             self.assertEqual(err, v['decode_error'])
