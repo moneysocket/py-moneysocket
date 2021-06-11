@@ -1269,5 +1269,32 @@
             }
         ],
         "test_name": "request_uuid is wrong type for notification"
+    },
+    {
+        "decode_error": "aditional TLVs duplicates of defined values",
+        "input_chunks": [
+            "00fd0106",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02f6",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            },
+            "0003030201"
+        ],
+        "test_name": "extra duplicate tlv"
     }
 ]

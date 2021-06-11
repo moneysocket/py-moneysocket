@@ -258,9 +258,9 @@ class Message():
 
         additional_tlvs = list(Namespace.iter_tlvs(tlv_stream))
         for t in additional_tlvs:
-            if t in {SENDER_VERSION_TLV_TYPE, MESSAGE_TYPE_TLV_TYPE,
-                     LANGUAGE_OBJECT_TLV_TYPE}:
-                return None, "aditional tlvs duplicates of defined values"
+            if t.t in {SENDER_VERSION_TLV_TYPE, MESSAGE_TYPE_TLV_TYPE,
+                       LANGUAGE_OBJECT_TLV_TYPE}:
+                return None, "aditional TLVs duplicates of defined values"
 
         type_name = language_object['type']
         subtype_name = language_object['subtype']
