@@ -1,1082 +1,1273 @@
+
 [
     {
         "decode_error": "could not get type: underrun while peeking a uint8",
-        "input_chunks": [""],
+        "input_chunks": [
+            ""
+        ],
         "test_name": "empty buffer"
     },
     {
         "decode_error": "could not get length: underrun while peeking a uint8",
-        "input_chunks": ["00"],
+        "input_chunks": [
+            "00"
+        ],
         "test_name": "single byte"
     },
     {
         "decode_error": "value truncated",
-        "input_chunks": ["00030003"],
+        "input_chunks": [
+            "00030003"
+        ],
         "test_name": "one byte short"
     },
     {
         "decode_error": "extra bytes after message TLV",
-        "input_chunks": ["000300030405"],
+        "input_chunks": [
+            "000300030405"
+        ],
         "test_name": "one byte too long"
     },
     {
         "decode_error": "unknown TLV",
-        "input_chunks": ["0103000304"],
+        "input_chunks": [
+            "0103000304"
+        ],
         "test_name": "wrong TLV Type"
     },
     {
         "decode_error": "invalid TLVs in message",
-        "input_chunks": ["0002ffff"],
+        "input_chunks": [
+            "0002ffff"
+        ],
         "test_name": "non tlv stream in message TLV"
     },
     {
         "decode_error": "no TLVs in message",
-        "input_chunks": ["0000"],
+        "input_chunks": [
+            "0000"
+        ],
         "test_name": "no TLVs in message"
     },
     {
         "decode_error": "missing sender_version TLV",
-        "input_chunks": ["0005",
-                         "0103",
-                         "030201"],
+        "input_chunks": [
+            "0005",
+            "0103",
+            "030201"
+        ],
         "test_name": "first TLV not sender_version"
     },
     {
         "decode_error": "malformed sender_version TLV: unable to decode version from bytes",
-        "input_chunks": ["0004",
-                         "0002",
-                         "0302"],
+        "input_chunks": [
+            "0004",
+            "0002",
+            "0302"
+        ],
         "test_name": "malformed sender_version tlv"
     },
     {
         "decode_error": "missing message_type TLV",
-        "input_chunks": ["0005",
-                         "0003",
-                         "030201"],
+        "input_chunks": [
+            "0005",
+            "0003",
+            "030201"
+        ],
         "test_name": "nothing after sender_version"
     },
     {
         "decode_error": "no message_type TLV after sender_version",
-        "input_chunks": ["0007",
-                         "0003",
-                         "030201",
-                         "0400"],
+        "input_chunks": [
+            "0007",
+            "0003",
+            "030201",
+            "0400"
+        ],
         "test_name": "different TLV after sender_version"
     },
     {
         "decode_error": "malformed message_type type value: underrun while popping a u8",
-        "input_chunks": ["0007",
-                         "0003",
-                         "030201",
-                         "0100"],
+        "input_chunks": [
+            "0007",
+            "0003",
+            "030201",
+            "0100"
+        ],
         "test_name": "malformed message_type TLV (1)"
     },
     {
         "decode_error": "malformed message_type subtype value: underrun while peeking a uint8",
-        "input_chunks": ["0008",
-                         "0003",
-                         "030201",
-                         "0101",
-                         "00"],
+        "input_chunks": [
+            "0008",
+            "0003",
+            "030201",
+            "0101",
+            "00"
+        ],
         "test_name": "malformed message_type TLV (2)"
     },
     {
         "decode_error": "extra bytes in message_type TLV",
-        "input_chunks": ["000a",
-                         "0003",
-                         "030201",
-                         "0103",
-                         "000000"],
+        "input_chunks": [
+            "000a",
+            "0003",
+            "030201",
+            "0103",
+            "000000"
+        ],
         "test_name": "malformed message_type TLV (3)"
     },
     {
         "decode_error": "missing language_object TLV",
-        "input_chunks": ["0009",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000"],
+        "input_chunks": [
+            "0009",
+            "0003",
+            "030201",
+            "0102",
+            "0000"
+        ],
         "test_name": "missing language_object"
     },
     {
         "decode_error": "no language_object TLV after message_type",
-        "input_chunks": ["000b",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "0300"],
+        "input_chunks": [
+            "000b",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "0300"
+        ],
         "test_name": "different TLV instead of language_object"
     },
     {
         "decode_error": "could not decode json object",
-        "input_chunks": ["000b",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "0200"],
+        "input_chunks": [
+            "000b",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "0200"
+        ],
         "test_name": "language_object JSON couldn't be decoded"
     },
     {
         "decode_error": "timestamp not in language_object",
-        "input_chunks": ["000d",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "0202",
-                         {}
-                        ],
+        "input_chunks": [
+            "000d",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "0202",
+            {}
+        ],
         "test_name": "empty language_object"
     },
     {
         "decode_error": "timestamp not an integer or float",
-        "input_chunks": ["00f6",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02eb",
-                         {"timestamp": "asdf",
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1
-                                     },
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                        }
-                        ],
+        "input_chunks": [
+            "00f6",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02eb",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": "asdf",
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "timestamp not a number"
     },
     {
         "decode_error": "timestamp is not a positive value",
-        "input_chunks": ["00f4",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02e9",
-                         {"timestamp": -100,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1
-                                     },
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00f4",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02e9",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": -100,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "negative timestamp"
     },
     {
         "decode_error": "timestamp in the future",
-        "input_chunks": ["00fd0101",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02f6",
-                         {"timestamp": 3246722008.844661,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1
-                                     },
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00fd0101",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02f6",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 3246722008.844661,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "(distant) future timestamp"
     },
     {
         "decode_error": "version not in language_object",
-        "input_chunks": ["00d0",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02c5",
-                         {"timestamp": 1623361001.983355,
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00d0",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02c5",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION"
+            }
+        ],
         "test_name": "version missing"
     },
     {
         "decode_error": "version not an object",
-        "input_chunks": ["00e1",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02d6",
-                         {"timestamp": 1623361001.983355,
-                          "version": null,
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00e1",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02d6",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": null
+            }
+        ],
         "test_name": "version not correct type"
     },
     {
         "decode_error": "version missing major value",
-        "input_chunks": ["00df",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02d4",
-                         {"timestamp": 1623361001.983355,
-                          "version": {},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00df",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02d4",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {}
+            }
+        ],
         "test_name": "version major value missing"
     },
     {
         "decode_error": "version major not integer",
-        "input_chunks": ["00ec",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02e1",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": null},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00ec",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02e1",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": null
+                }
+            }
+        ],
         "test_name": "version major wrong type"
     },
     {
         "decode_error": "version major negative",
-        "input_chunks": ["00ea",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02df",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": -1},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00ea",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02df",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": -1
+                }
+            }
+        ],
         "test_name": "version major negative integer"
     },
     {
         "decode_error": "version major greater than 255",
-        "input_chunks": ["00eb",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02e0",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 400},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00eb",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02e0",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 400
+                }
+            }
+        ],
         "test_name": "version major larger than max u8"
     },
     {
         "decode_error": "version missing minor value",
-        "input_chunks": ["00e9",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02de",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 1},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00e9",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02de",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 1
+                }
+            }
+        ],
         "test_name": "version minor value not included"
     },
     {
         "decode_error": "version missing minor value",
-        "input_chunks": ["00e9",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02de",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 1},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00e9",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02de",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 1
+                }
+            }
+        ],
         "test_name": "version minor value not included"
     },
     {
         "decode_error": "version minor not integer",
-        "input_chunks": ["00f7",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02ec",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 1,
-                                      "minor": "2"},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00f7",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02ec",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 1,
+                    "minor": "2"
+                }
+            }
+        ],
         "test_name": "version minor value wrong type"
     },
     {
         "decode_error": "version minor negative",
-        "input_chunks": ["00f6",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02eb",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 1,
-                                      "minor": -2},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00f6",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02eb",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 1,
+                    "minor": -2
+                }
+            }
+        ],
         "test_name": "version minor negative integer"
     },
     {
         "decode_error": "version minor greater than 255",
-        "input_chunks": ["00f7",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02ec",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 1,
-                                      "minor": 555},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00f7",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02ec",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 1,
+                    "minor": 555
+                }
+            }
+        ],
         "test_name": "version minor greater than max u8"
     },
     {
         "decode_error": "version missing patch value",
-        "input_chunks": ["00f5",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02ea",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 1,
-                                      "minor": 2},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00f5",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02ea",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 1,
+                    "minor": 2
+                }
+            }
+        ],
         "test_name": "version patch value not included"
     },
     {
         "decode_error": "version patch not integer",
-        "input_chunks": ["00fd0102",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02f7",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 1,
-                                      "minor": 2,
-                                      "patch": []},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00fd0102",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02f7",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 1,
+                    "minor": 2,
+                    "patch": []
+                }
+            }
+        ],
         "test_name": "version patch value wrong type"
     },
     {
         "decode_error": "version patch negative",
-        "input_chunks": ["00fd0102",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02f7",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 1,
-                                      "minor": 2,
-                                      "patch": -3},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00fd0102",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02f7",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 1,
+                    "minor": 2,
+                    "patch": -3
+                }
+            }
+        ],
         "test_name": "version patch integer less than zero"
     },
     {
         "decode_error": "version patch greater than 255",
-        "input_chunks": ["00fd0103",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02f8",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 1,
-                                      "minor": 2,
-                                      "patch": 777},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                        }
-                        ],
+        "input_chunks": [
+            "00fd0103",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02f8",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 1,
+                    "minor": 2,
+                    "patch": 777
+                }
+            }
+        ],
         "test_name": "version patch greater than max u8"
     },
     {
         "decode_error": "language_object major version doesn't match TLV",
-        "input_chunks": ["00fd0101",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02f6",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 4,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00fd0101",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02f6",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 4,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "inconsistent major version"
     },
     {
         "decode_error": "language_object minor version doesn't match TLV",
-        "input_chunks": ["00fd0101",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02f6",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 3,
-                                      "patch": 1},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00fd0101",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02f6",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 3,
+                    "minor": 3,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "inconsistent minor version"
     },
     {
         "decode_error": "language_object patch version doesn't match TLV",
-        "input_chunks": ["00fd0101",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02f6",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 2},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00fd0101",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02f6",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 2
+                }
+            }
+        ],
         "test_name": "inconsistent patch version"
     },
     {
         "decode_error": "language_object features value not included",
-        "input_chunks": ["00f1",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02e6",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00f1",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02e6",
+            {
+                "feature_data": {},
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "features list not included"
     },
     {
         "decode_error": "language_object features value not a list",
-        "input_chunks": ["00fd0101",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02f6",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": {},
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00fd0101",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02f6",
+            {
+                "feature_data": {},
+                "features": {},
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "features list wrong type"
     },
     {
         "decode_error": "language_object feature_data value not included",
-        "input_chunks": ["00fa",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02ef",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": ["feature_one"]
-                         }
-                        ],
+        "input_chunks": [
+            "00fa",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02ef",
+            {
+                "features": [
+                    "feature_one"
+                ],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "feature_data object not included"
     },
     {
         "decode_error": "language_object feature_data value not an object",
-        "input_chunks": ["00fd0110",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02fd0103",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": ["feature_one"],
-                          "feature_data": []
-                         }
-                        ],
+        "input_chunks": [
+            "00fd0110",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02fd0103",
+            {
+                "feature_data": [],
+                "features": [
+                    "feature_one"
+                ],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "feature_data object not included"
     },
     {
         "decode_error": "language_object feature_data for unknown feature",
-        "input_chunks": ["00fd0122",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02fd0115",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": ["feature_one"],
-                          "feature_data": {"feature_two": 123}
-                         }
-                        ],
+        "input_chunks": [
+            "00fd0122",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02fd0115",
+            {
+                "feature_data": {
+                    "feature_two": 123
+                },
+                "features": [
+                    "feature_one"
+                ],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "feature_data for undeclared feature"
     },
     {
         "decode_error": "language_object feature_data value is null",
-        "input_chunks": ["00fd0123",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02fd0116",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "type":    "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": ["feature_one"],
-                          "feature_data": {"feature_one": null}
-                         }
-                        ],
+        "input_chunks": [
+            "00fd0123",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02fd0116",
+            {
+                "feature_data": {
+                    "feature_one": null
+                },
+                "features": [
+                    "feature_one"
+                ],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "feature_data is null"
     },
     {
         "decode_error": "language_object missing type",
-        "input_chunks": ["00fd010b",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02fd00fe",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": ["feature_one"],
-                          "feature_data": {"feature_one": 1234}
-                         }
-                        ],
+        "input_chunks": [
+            "00fd010b",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02fd00fe",
+            {
+                "feature_data": {
+                    "feature_one": 1234
+                },
+                "features": [
+                    "feature_one"
+                ],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "type value not included"
     },
     {
         "decode_error": "language_object type is not a string",
-        "input_chunks": ["00fd0118",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02fd010b",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "type": 123,
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": ["feature_one"],
-                          "feature_data": {"feature_one": 1234}
-                         }
-                        ],
+        "input_chunks": [
+            "00fd0118",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02fd010b",
+            {
+                "feature_data": {
+                    "feature_one": 1234
+                },
+                "features": [
+                    "feature_one"
+                ],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": 123,
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "type value is wrong type"
     },
     {
         "decode_error": "language_object type is an empty string",
-        "input_chunks": ["00f5",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02ea",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "features": ["feature_one"],
-                          "feature_data": {"feature_one": 1234},
-                          "type": "",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00f5",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02ea",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "type value is empty string"
     },
     {
         "decode_error": "language_object missing subtype",
-        "input_chunks": ["00df",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02d4",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "features": ["feature_one"],
-                          "feature_data": {"feature_one": 1234},
-                          "type": "REQUEST",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00df",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02d4",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "REQUEST",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "language_object missing subtype"
     },
     {
         "decode_error": "language_object subtype is not a string",
-        "input_chunks": ["00f0",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02e5",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "features": ["feature_one"],
-                          "feature_data": {"feature_one": 1234},
-                          "type": "REQUEST",
-                          "subtype": null,
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00f0",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02e5",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": null,
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "REQUEST",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "language_object subtype not a string"
     },
     {
         "decode_error": "language_object subtype is an empty string",
-        "input_chunks": ["00ee",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02e3",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "features": ["feature_one"],
-                          "feature_data": {"feature_one": 1234},
-                          "type": "REQUEST",
-                          "subtype": "",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00ee",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02e3",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "REQUEST",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "language_object subtype is an empty string"
     },
     {
         "decode_error": "no subtype_data included",
-        "input_chunks": ["00e8",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02dd",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "features": ["feature_one"],
-                          "feature_data": {"feature_one": 1234},
-                          "type": "REQUEST",
-                          "subtype": "TRANSPORT_PING",
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00e8",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02dd",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PING",
+                "timestamp": 1623361001.983355,
+                "type": "REQUEST",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "no subtype_data value"
     },
     {
         "decode_error": "subtype_data not of object type",
-        "input_chunks": ["00fc",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02f1",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "features": ["feature_one"],
-                          "feature_data": {"feature_one": 1234},
-                          "type": "REQUEST",
-                          "subtype": "TRANSPORT_PING",
-                          "subtype_data": "",
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00fc",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02f1",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PING",
+                "subtype_data": "",
+                "timestamp": 1623361001.983355,
+                "type": "REQUEST",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "subtype_data wrong type"
     },
     {
         "decode_error": "unknown message type",
-        "input_chunks": ["00fd0104",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02f9",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "features": [],
-                          "feature_data": {},
-                          "type": "NOT_A_REAL_TYPE",
-                          "subtype": "TRANSPORT_PING",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00fd0104",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02f9",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "TRANSPORT_PING",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOT_A_REAL_TYPE",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "subtype_data wrong type"
     },
     {
         "decode_error": "unknown message subtype parser",
-        "input_chunks": ["00fd0100",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02f5",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "features": [],
-                          "feature_data": {},
-                          "type": "REQUEST",
-                          "subtype": "NOT_A_REAL_SUBTYPE",
-                          "subtype_data": {},
-                          "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00fd0100",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02f5",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "a5b32936-3143-4856-bdea-7b3dda7aa5e8",
+                "subtype": "NOT_A_REAL_SUBTYPE",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "REQUEST",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "unknown subtype"
     },
     {
         "decode_error": "no request_uuid for REQUEST",
-        "input_chunks": ["00c4",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02b9",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "features": [],
-                          "feature_data": {},
-                          "type": "REQUEST",
-                          "subtype": "TRANSPORT_PING",
-                          "subtype_data": {},
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00c4",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02b9",
+            {
+                "feature_data": {},
+                "features": [],
+                "subtype": "TRANSPORT_PING",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "REQUEST",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "missing request_uuid for request"
     },
     {
         "decode_error": "request_uuid is not a string",
-        "input_chunks": ["00da",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02cf",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "features": [],
-                          "feature_data": {},
-                          "type": "REQUEST",
-                          "subtype": "TRANSPORT_PING",
-                          "request_uuid": null,
-                          "subtype_data": {},
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00da",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02cf",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": null,
+                "subtype": "TRANSPORT_PING",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "REQUEST",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "missing null request_uuid for request"
     },
     {
         "decode_error": "uuid is not uuid version 4",
-        "input_chunks": ["00fc",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02f1",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "features": [],
-                          "feature_data": {},
-                          "type": "REQUEST",
-                          "subtype": "TRANSPORT_PING",
-                          "request_uuid": "b032ee60-c23c-11eb-a86b-08606ee5ade6",
-                          "subtype_data": {},
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00fc",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02f1",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "b032ee60-c23c-11eb-a86b-08606ee5ade6",
+                "subtype": "TRANSPORT_PING",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "REQUEST",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "request_uuid is wrong type"
     },
     {
         "decode_error": "invalid uuid",
-        "input_chunks": ["00dd",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02d2",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "features": [],
-                          "feature_data": {},
-                          "type": "REQUEST",
-                          "subtype": "TRANSPORT_PING",
-                          "request_uuid": "hello",
-                          "subtype_data": {},
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00dd",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02d2",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": "hello",
+                "subtype": "TRANSPORT_PING",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "REQUEST",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "request_uuid is not a uuid"
     },
     {
         "decode_error": "no request_uuid for NOTIFICATION",
-        "input_chunks": ["00c9",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02be",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "features": [],
-                          "feature_data": {},
-                          "type": "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "subtype_data": {},
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00c9",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02be",
+            {
+                "feature_data": {},
+                "features": [],
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "no request_uuid value for notification"
     },
     {
         "decode_error": "request_uuid is not a string",
-        "input_chunks": ["00dd",
-                         "0003",
-                         "030201",
-                         "0102",
-                         "0000",
-                         "02d2",
-                         {"timestamp": 1623361001.983355,
-                          "version": {"major": 3,
-                                      "minor": 2,
-                                      "patch": 1},
-                          "features": [],
-                          "feature_data": {},
-                          "type": "NOTIFICATION",
-                          "subtype": "TRANSPORT_PONG",
-                          "request_uuid": [],
-                          "subtype_data": {},
-                          "features": [],
-                          "feature_data": {}
-                         }
-                        ],
+        "input_chunks": [
+            "00dd",
+            "0003",
+            "030201",
+            "0102",
+            "0000",
+            "02d2",
+            {
+                "feature_data": {},
+                "features": [],
+                "request_uuid": [],
+                "subtype": "TRANSPORT_PONG",
+                "subtype_data": {},
+                "timestamp": 1623361001.983355,
+                "type": "NOTIFICATION",
+                "version": {
+                    "major": 3,
+                    "minor": 2,
+                    "patch": 1
+                }
+            }
+        ],
         "test_name": "request_uuid is wrong type for notification"
     }
 ]
