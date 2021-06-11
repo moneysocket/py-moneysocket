@@ -73,7 +73,7 @@ class Message():
     @staticmethod
     def check_language_object_for_subtype(language_object):
         if "subtype_data" not in language_object:
-            return "no subtype data included"
+            return "no subtype_data included"
         if type(language_object['subtype_data']) != dict:
             return "subtype_data not of object type"
         if not MESSAGE_DIRECTORY.has_entry(language_object['type'],
@@ -95,7 +95,7 @@ class Message():
 
             err = Message.check_uuidv4(language_object['request_uuid'])
             if err:
-                return None, err
+                return err
         elif t == "NOTIFICATION":
             if "request_uuid" not in language_object:
                 return "no request_uuid for NOTIFICATION"
@@ -105,10 +105,10 @@ class Message():
                     return "request_uuid is not a string"
                 err = Message.check_uuidv4(rrid)
                 if err:
-                    return None, err
+                    return err
             # null rrid is allowed, but subtype might not allow it
         else:
-            return None, "unknown message type"
+            return "unknown message type"
 
         return None
 
