@@ -25,7 +25,7 @@ DECODE_ERROR_VECTORS = load_json_file(
 
 
 class TestMessage(unittest.TestCase):
-    def xxx_test_message_encode_decode(self):
+    def test_message_encode_decode(self):
         for v in ENCODE_DECODE_VECTORS:
             input_dict = v['decoded']
             m = Message.from_dict(input_dict)

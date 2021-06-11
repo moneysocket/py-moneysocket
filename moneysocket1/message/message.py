@@ -25,7 +25,6 @@ LANGUAGE_OBJECT_TLV_TYPE = 2
 ONE_HOUR_IN_SECONDS = 60 * 60
 
 
-
 class Message():
     def __init__(self, language_object, additional_tlvs=[],
                  sender_version=None):
@@ -46,8 +45,6 @@ class Message():
     def to_json(self):
         return json.dumps(self.to_dict(), sort_keys=True)
 
-
-
     @staticmethod
     def from_dict(message_dict):
         # assume dictionary is already validated
@@ -63,7 +60,6 @@ class Message():
         return c(language_object, additional_tlvs=additional_tlvs,
                  sender_version=sender_version)
 
-
     @staticmethod
     def check_uuidv4(uuid_str):
         try:
@@ -73,7 +69,6 @@ class Message():
         except Exception as e:
             return "invalid uuid"
         return None
-
 
     @staticmethod
     def check_language_object_for_subtype(language_object):
@@ -295,54 +290,11 @@ class Message():
                    sender_version_tlv + message_type_tlv +
                    language_object_tlv + additional_tlvs).encode()
 
-
-class MessageSubtype(Message):
-    def __init__(self, language_object, additional_tlvs=[],
-                 sender_version=None):
-        super().__init__(language_object, additional_tlvs=additional_tlvs,
-                         sender_version=sender_version)
-
     @staticmethod
     def validate_subtype_data(language_object):
         raise NotImplementedError("implement in subclass")
 
 
 
-class TransportPing(MessageSubtype):
-    TYPE_NO = 0x0
-    TYPE_NAME = "REQUEST"
-    SUBTYPE_NO = 0x0
-    SUBTYPE_NAME = "TRANSPORT_PING"
-    def __init__(self, language_object, additional_tlvs=[],
-                 sender_version=None):
-        super().__init__(language_object, additional_tlvs=additional_tlvs,
-                         sender_version=sender_version)
-
-    @staticmethod
-    def validate_subtype_data(language_object):
-        return None
-
-
-MESSAGE_DIRECTORY.register(TransportPing)
-
-class TransportPong(MessageSubtype):
-    TYPE_NO = 0x1
-    TYPE_NAME = "NOTIFICATION"
-    SUBTYPE_NO = 0x0
-    SUBTYPE_NAME = "TRANSPORT_PONG"
-    def __init__(self, language_object, additional_tlvs=[],
-                 sender_version=None):
-        super().__init__(language_object, additional_tlvs=additional_tlvs,
-                         sender_version=sender_version)
-
-    @staticmethod
-    def validate_subtype_data(language_object):
-        if type(language_object['request_uuid']) is not str:
-            return "non-string request uuid for TRANSPORT_PONG"
-        err = TransportPong.check_uuidv4(language_object['request_uuid'])
-        if err:
-            return err
-        return None
-
-
-MESSAGE_DIRECTORY.register(TransportPong)
+from .request.transport_ping import TransportPing
+from .notification.transport_pong import TransportPong
